@@ -1,0 +1,77 @@
+{
+  "secluded-cabin": {
+    "path": "/is/sumarbustadur-kirkjubaejarklaustur",
+    "title": "Sumarbústaður við Kirkjubæjarklaustur til leigu | See you in Iceland",
+    "description": "Notalegur sumarbústaður á bakka Hæðargarðsvatns, 2 km frá Kirkjubæjarklaustri. Fyrir 2–4 gesti og gæludýr eru velkomin. Bókaðu beint, án milliliða.",
+    "name": "Sumarbústaður við vatnið",
+    "place": "Kirkjubæjarklaustur, Suðurlandi",
+    "headline": "Bústaður við vatnið, fullkominn upphafsstaður fyrir Suðurland",
+    "intro": "<p>Bústaðurinn stendur á bakka Hæðargarðsvatns, í kyrrð en aðeins 2 km frá Kirkjubæjarklaustri. Hægt er að ganga meðfram vatninu beint frá dyrunum.</p><p>Bústaðurinn er lítill og notalegur, með einu svefnherbergi með tvíbreiðu rúmi og svefnlofti. Svefnloftið er ekki með fullri lofthæð og hentar best börnum, svo bústaðurinn er tilvalinn fyrir fjögurra manna fjölskyldu.</p><p>Héðan er stutt í margar af helstu náttúruperlum Suðurlands, eins og Fjaðrárgljúfur, Skaftafell og Jökulsárlón.</p>",
+    "size": "45 m²",
+    "guests": "2–4 gestir",
+    "bedrooms": "1 svefnherbergi og svefnloft",
+    "amenities": [
+      "Stofa",
+      "Baðherbergi með sturtu",
+      "Eitt svefnherbergi",
+      "Svefnloft",
+      "Fullbúið eldhús",
+      "Grill",
+      "Frí bílastæði",
+      "Frítt þráðlaust net"
+    ],
+    "locationText": "<p>Bústaðurinn er 2 km frá Kirkjubæjarklaustri og um 260 km frá Reykjavík, eða um þriggja tíma akstur. Hann er nálægt þjóðveginum og aðgengilegur allt árið, en á veturna mælum við með fjórhjóladrifnum bíl því veður á Íslandi getur verið óútreiknanlegt.</p>",
+    "nearby": [
+      { "name": "Kirkjugólf", "distance": "2 km", "body": "Um 80 fermetra flötur af stuðlabergi sem lítur út eins og hellulagt kirkjugólf." },
+      { "name": "Systrafoss", "distance": "2,7 km", "body": "Fallegur foss fyrir ofan Kirkjubæjarklaustur, umvafinn sögum og þjóðsögnum." },
+      { "name": "Fjaðrárgljúfur", "distance": "9 km", "body": "Stórbrotið gljúfur, um 2 km langt og allt að 100 m djúpt, stutt frá þjóðveginum." },
+      { "name": "Svartifoss", "distance": "69 km", "body": "Foss í Skaftafelli, 20 m hár og umgirtur svörtu stuðlabergi." },
+      { "name": "Skógafoss", "distance": "104 km", "body": "Einn stærsti foss landsins, 60 m hár og 25 m breiður." },
+      { "name": "Jökulsárlón", "distance": "123 km", "body": "Þekktasta jökullón landsins, þar sem ísjakar fljóta út í sjó." },
+      { "name": "Seljalandsfoss", "distance": "132 km", "body": "60 m hár foss sem hægt er að ganga á bak við." }
+    ]
+  },
+  "luxury-home-hveragerdi": {
+    "path": "/is/orlofshus-hveragerdi",
+    "title": "Orlofshús í Hveragerði fyrir stórfjölskylduna | See you in Iceland",
+    "description": "Rúmgott hús við ána Varmá í Hveragerði, með heitum potti á svölunum. Sex svefnherbergi og tvö baðherbergi fyrir allt að 10 gesti, um 45 km frá Reykjavík. Bókaðu beint.",
+    "name": "Orlofshús í Hveragerði",
+    "place": "Hveragerði, Suðurlandi",
+    "headline": "Hús fyrir alla fjölskylduna, í hjarta Hveragerðis",
+    "intro": "<p>Slakaðu á með allri fjölskyldunni í fallega húsinu okkar við ána Varmá í Hveragerði. Húsið er eitt af elstu húsum bæjarins og hefur verið í eigu sömu fjölskyldu frá því það var byggt, en verið gert upp í gegnum árin. Náttúran er allt í kring og stutt er að ganga á veitingastaði, í matvöruverslun, listasafn, á leikvöll og í sundlaugina.</p><h3>Húsið</h3><p>Húsið er á þremur hæðum.</p><p><strong>Jarðhæð:</strong> stofa, borðstofa og eldhús, eitt svefnherbergi (tvíbreitt rúm, 140 cm) og baðherbergi.</p><p><strong>Önnur hæð:</strong> þrjú svefnherbergi (tvö með 180 cm tvíbreiðum rúmum og eitt með tveimur einbreiðum rúmum), sjónvarpsherbergi, baðherbergi og heitur pottur á svölunum.</p><p><strong>Þriðja hæð:</strong> tvö svefnherbergi með einbreiðum rúmum.</p><h3>Aðgangur gesta</h3><p>Gestir hafa aðgang að öllu húsinu, nema fataherbergi og háalofti.</p>",
+    "size": null,
+    "guests": "Allt að 10 gestir",
+    "bedrooms": "6 svefnherbergi, 2 baðherbergi",
+    "amenities": [
+      "Þráðlaust net",
+      "Frí bílastæði",
+      "Heitur pottur",
+      "Pallur / verönd",
+      "Grill",
+      "Arinn",
+      "Ofnakynding",
+      "Fullbúið eldhús",
+      "Bakarofn",
+      "Örbylgjuofn",
+      "Ísskápur",
+      "Uppþvottavél",
+      "Kaffivél",
+      "Þvottavél",
+      "Þurrkari",
+      "Sjónvarp",
+      "Vinnuaðstaða",
+      "Garður",
+      "Fjallasýn",
+      "Hleðslustöð fyrir rafbíl",
+      "Barnarúm",
+      "Rúmföt og handklæði",
+      "Reykskynjari",
+      "Reykingar bannaðar"
+    ],
+    "locationText": "<p>Húsið er í Hveragerði, rétt við ána Varmá, um 45 km frá Reykjavík. Stutt er að ganga á veitingastaði, í matvöruverslun, listasafn, á leikvöll og í sundlaugina. Vegurinn er malbikaður alla leið og greiðfær allt árið.</p>",
+    "nearby": [
+      { "name": "Reykjadalur", "distance": "", "body": "Vinsæl gönguleið að heitum læk sem hægt er að baða sig í. Gangan hefst rétt ofan við bæinn." },
+      { "name": "Gullni hringurinn", "distance": "", "body": "Þingvellir, Geysir og Gullfoss eru öll í þægilegri dagsferð frá húsinu." }
+    ]
+  }
+}

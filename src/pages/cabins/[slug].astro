@@ -1,9 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro';
-import BookingWidget from '../../components/BookingWidget.astro';
+import CabinPage from '../../components/CabinPage.astro';
 import data from '../../content/cabins.json';
+import isCopy from '../../content/cabins.is.json';
 import { breadcrumb, cabinSchema } from '../../lib/schema.js';
-import { responsive } from '../../lib/img.js';
 
 export function getStaticPaths() {
   return data.cabins.map((cabin) => ({ params: { slug: cabin.slug }, props: { cabin } }));
@@ -27,225 +27,44 @@ const sleeps = cabin.maxGuests ? ` Sleeps up to ${cabin.maxGuests}` : '';
 const rooms = cabin.bedroomsLabel ? ` in ${cabin.bedroomsLabel.toLowerCase()}` : '';
 const stay = cabin.minStay > 1 ? `, minimum ${cabin.minStay} nights` : '';
 const metaDescription = `${cabin.headline}. Self-catering holiday home${where}.${sleeps}${rooms}${stay}. Book direct.`;
+
+const path = `/cabins/${cabin.slug}`;
+const isPath = isCopy[cabin.slug]?.path;
 ---
 
 <Base
   title={`${cabin.name} | See you in Iceland`}
   description={metaDescription}
   socialImage={cabin.cover?.src}
+  alternates={isPath ? [{ hreflang: 'en', path }, { hreflang: 'is', path: isPath }, { hreflang: 'x-default', path }] : []}
   jsonLd={[
     cabinSchema(cabin),
     breadcrumb([
       { name: 'Home', path: '/' },
       { name: 'Cabins', path: '/cabins' },
-      { name: cabin.name, path: `/cabins/${cabin.slug}` },
+      { name: cabin.name, path },
     ]),
   ]}
 >
-  <section class="hero">
-    <div class="shell">
-      <div class="hero-frame">
-        {cabin.cover && (
-          <img
-            src={cabin.cover.src}
-            alt={cabin.cover.alt || cabin.name}
-            width={cabin.cover.width}
-            height={cabin.cover.height}
-            fetchpriority="high"
-            {...responsive(cabin.cover, '100vw')}
-          />
-        )}
-        <div class="hero-scrim"></div>
-        <!-- The cabin's name alone says nothing about where it is, and the H1 is one of the
-             strongest on-page signals for local searches like "cabin Kirkjubæjarklaustur". -->
-        <h1>
-          {cabin.name}
-          {cabin.place?.locality && <span class="h1-place">{cabin.place.locality}, South Iceland</span>}
-        </h1>
-      </div>
-    </div>
-  </section>
-
-  <section class="shell intro reveal">
-    <div class="intro-copy">
-      <p class="eyebrow">Main info</p>
-      <h2>{cabin.headline}</h2>
-      <div class="prose" set:html={cabin.intro} />
-    </div>
-
-    <dl class="facts">
-      {facts.map((f) => (
-        <div class="fact">
-          <dt>{f.label}</dt>
-          <dd>{f.value}</dd>
-        </div>
-      ))}
-    </dl>
-  </section>
-
-  {cabin.amenities.length > 0 && (
-    <section class="shell amenities reveal">
-      <p class="eyebrow">What's included</p>
-      <ul>
-        {cabin.amenities.map((a) => <li>{a}</li>)}
-      </ul>
-    </section>
-  )}
-
-  {cabin.gallery.length > 0 && (
-    <section class="shell gallery reveal">
-      <p class="eyebrow">The cabin</p>
-      <div class="gallery-grid">
-        {cabin.gallery.map((img, i) => (
-          <img
-            src={img.src}
-            alt={img.alt || `${cabin.name} — photo ${i + 2}`}
-            width={img.width}
-            height={img.height}
-            loading="lazy"
-            {...responsive(img, '(min-width: 900px) 33vw, (min-width: 600px) 50vw, 100vw')}
-          />
-        ))}
-      </div>
-    </section>
-  )}
-
-  {cabin.locationText && (
-    <section class="shell location reveal" id="location">
-      <p class="eyebrow">Location and access</p>
-      <div class="prose" set:html={cabin.locationText} />
-      {cabin.mapsLink && (
-        <a class="maps" href={cabin.mapsLink} target="_blank" rel="noopener">View on Google Maps</a>
-      )}
-    </section>
-  )}
-
-  <section class="shell booking reveal" id="book">
-    <p class="eyebrow">Book now</p>
-    <h2>Book your stay</h2>
-    <BookingWidget propertyId={cabin.propertyId} />
-  </section>
+  <CabinPage
+    cabin={cabin}
+    name={cabin.name}
+    place={cabin.place?.locality && `${cabin.place.locality}, South Iceland`}
+    headline={cabin.headline}
+    intro={cabin.intro}
+    facts={facts}
+    amenities={cabin.amenities}
+    locationText={cabin.locationText}
+    altLang={isPath && { href: isPath, hreflang: 'is', label: 'Á íslensku' }}
+    labels={{
+      mainInfo: 'Main info',
+      included: "What's included",
+      gallery: 'The cabin',
+      photo: 'photo',
+      location: 'Location and access',
+      maps: 'View on Google Maps',
+      book: 'Book now',
+      bookHeading: 'Book your stay',
+    }}
+  />
 </Base>
-
-<style>
-  .eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 600;
-    color: var(--slate);
-  }
-
-  .hero { padding-top: 90px; }
-  .hero-frame {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    min-height: 60vh;
-    display: flex;
-    align-items: flex-end;
-    padding: 56px;
-  }
-  .hero-frame img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .hero-scrim {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-  }
-  .hero h1 {
-    position: relative;
-    color: var(--ground);
-    font-size: clamp(38px, 7vw, 80px);
-    max-width: 16ch;
-  }
-  .h1-place {
-    display: block;
-    margin-top: 14px;
-    font-family: var(--font-body);
-    font-size: 14px;
-    letter-spacing: 0.12em;
-    line-height: 1.3;
-    text-transform: uppercase;
-    font-weight: 600;
-  }
-
-  section { margin-top: 72px; }
-
-  .intro {
-    display: grid;
-    gap: 32px;
-  }
-  @media (min-width: 810px) {
-    .intro { grid-template-columns: 1.6fr 1fr; align-items: start; gap: 56px; }
-  }
-  .intro-copy { display: flex; flex-direction: column; gap: 14px; }
-  .intro h2 { font-size: clamp(26px, 3.4vw, 40px); }
-
-  .prose { display: flex; flex-direction: column; gap: 14px; font-size: 15px; line-height: 1.6; }
-  .prose :global(h3) {
-    font-family: var(--font-body);
-    font-size: 13px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--heading-ink);
-    font-weight: 600;
-  }
-  .prose :global(p) { margin: 0; }
-
-  .facts {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    border-top: 1px solid var(--rule);
-  }
-  .fact {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--rule);
-  }
-  .fact dt { font-size: 13px; color: var(--body-ink); }
-  .fact dd { margin: 0; font-size: 13px; font-weight: 600; color: var(--heading-ink); text-align: right; }
-
-  .amenities ul {
-    list-style: none;
-    margin: 14px 0 0;
-    padding: 0;
-    display: grid;
-    gap: 8px 24px;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    font-size: 14px;
-  }
-
-  .gallery-grid {
-    margin-top: 14px;
-    display: grid;
-    gap: 12px;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  }
-  .gallery-grid img {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: 10px;
-  }
-
-  .location { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; max-width: 720px; }
-  .maps {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--slate);
-  }
-
-  .booking { display: flex; flex-direction: column; gap: 12px; }
-  .booking h2 { font-size: clamp(26px, 3.4vw, 40px); }
-</style>

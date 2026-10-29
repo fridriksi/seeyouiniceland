@@ -1,0 +1,78 @@
+---
+// Icelandic cabin pages. The copy lives in src/content/cabins.is.json, keyed by the English
+// slug; the facts (guests, prices, house rules) come from the same Hostly sync as the English
+// page, so a price change in Hostly reaches both languages.
+import Base from '../../layouts/Base.astro';
+import CabinPage from '../../components/CabinPage.astro';
+import data from '../../content/cabins.json';
+import isCopy from '../../content/cabins.is.json';
+import { cabinSchema } from '../../lib/schema.js';
+
+export function getStaticPaths() {
+  return data.cabins
+    .filter((cabin) => isCopy[cabin.slug])
+    .map((cabin) => ({
+      params: { path: isCopy[cabin.slug].path.replace(/^\/is\//, '') },
+      props: { cabin, copy: isCopy[cabin.slug] },
+    }));
+}
+
+const { cabin, copy } = Astro.props;
+const listing = cabin.listing || {};
+const money = (n) => `€${n}`;
+const yesNo = (v, yes, no) => (v === true ? yes : v === false ? no : null);
+
+const facts = [
+  copy.size ? { label: 'Stærð', value: copy.size } : null,
+  { label: 'Gestir', value: copy.guests },
+  { label: 'Svefnherbergi', value: copy.bedrooms },
+  cabin.minStay > 1 ? { label: 'Lágmarksdvöl', value: `${cabin.minStay} nætur` } : null,
+  listing.priceRange ? { label: 'Verð', value: listing.priceRange.replace(/ per night$/, ' á nótt') } : null,
+  cabin.cleaningFee ? { label: 'Þrifagjald', value: money(cabin.cleaningFee) } : null,
+  listing.checkinTime ? { label: 'Innritun', value: `frá kl. ${listing.checkinTime}` } : null,
+  listing.checkoutTime ? { label: 'Útritun', value: `fyrir kl. ${listing.checkoutTime}` } : null,
+  yesNo(listing.petsAllowed, 'Velkomin', 'Ekki leyfð') && {
+    label: 'Gæludýr',
+    value: yesNo(listing.petsAllowed, 'Velkomin', 'Ekki leyfð'),
+  },
+].filter(Boolean);
+
+const enPath = `/cabins/${cabin.slug}`;
+---
+
+<Base
+  title={copy.title}
+  description={copy.description}
+  socialImage={cabin.cover?.src}
+  lang="is"
+  alternates={[
+    { hreflang: 'en', path: enPath },
+    { hreflang: 'is', path: copy.path },
+    { hreflang: 'x-default', path: enPath },
+  ]}
+  jsonLd={[cabinSchema(cabin)]}
+>
+  <CabinPage
+    cabin={cabin}
+    name={copy.name}
+    place={copy.place}
+    headline={copy.headline}
+    intro={copy.intro}
+    facts={facts}
+    amenities={copy.amenities}
+    locationText={copy.locationText}
+    nearby={copy.nearby}
+    altLang={{ href: enPath, hreflang: 'en', label: 'In English' }}
+    labels={{
+      mainInfo: 'Um bústaðinn',
+      included: 'Aðstaða',
+      gallery: 'Myndir',
+      photo: 'mynd',
+      location: 'Staðsetning og aðgengi',
+      nearby: 'Í nágrenninu',
+      maps: 'Skoða á Google Maps',
+      book: 'Bóka',
+      bookHeading: 'Bókaðu dvöl',
+    }}
+  />
+</Base>
