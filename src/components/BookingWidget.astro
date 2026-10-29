@@ -23,9 +23,14 @@ params.set('primary', '#4b6681');
 params.set('text', '#292d30');
 params.set('bg', '#ffffff');
 params.set('radius', '12');
+// The site's body stack (tokens.css --font-body). Switzer itself is not loaded inside the
+// frame, so this lands on the same system face the rest of the page falls back to.
+params.set('font', 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif');
 
 const src = `https://app.hostly.is/widget/view?${params.toString()}`;
-const initialHeight = experienceId ? 560 : 1200;
+// Starting heights from Hostly's current embed code; the postMessage handler below resizes
+// to the real content height once the widget renders.
+const initialHeight = experienceId ? 1150 : 1650;
 ---
 
 <iframe
