@@ -6,6 +6,7 @@ import TourGrid from '../components/TourGrid.astro';
 import img from '../content/img.pages.json';
 import tourData from '../content/tours.generated.json';
 import { breadcrumb, tourListSchema } from '../lib/schema.js';
+import { responsive } from '../lib/img.js';
 
 // The Hveragerdi walking tour, sold through Hostly.
 const EXPERIENCE_ID = 'x_mshcxhkzvuptj';
@@ -23,7 +24,7 @@ const EXPERIENCE_ID = 'x_mshcxhkzvuptj';
   <PageHero
     image={img['tours-hero']}
     eyebrow="Experience Iceland"
-    heading="Book your adventure"
+    heading="Tours in South Iceland"
     cta={{ text: 'Book accommodation', href: '/book-now' }}
   />
 
@@ -53,7 +54,8 @@ const EXPERIENCE_ID = 'x_mshcxhkzvuptj';
     </div>
     <a class="car-img" href="https://www.bluecarrental.is/?affiliate=Seeyouiniceland" target="_blank" rel="noopener" aria-label="Blue Car Rental">
       <img src={img['car-rental'].src} alt={img['car-rental'].alt}
-           width={img['car-rental'].width} height={img['car-rental'].height} loading="lazy" />
+           width={img['car-rental'].width} height={img['car-rental'].height} loading="lazy"
+           {...responsive(img['car-rental'], '(min-width: 810px) 301px, 100vw')} />
     </a>
   </section>
 </Base>

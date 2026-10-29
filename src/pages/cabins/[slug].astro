@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import BookingWidget from '../../components/BookingWidget.astro';
 import data from '../../content/cabins.json';
 import { breadcrumb, cabinSchema } from '../../lib/schema.js';
+import { responsive } from '../../lib/img.js';
 
 export function getStaticPaths() {
   return data.cabins.map((cabin) => ({ params: { slug: cabin.slug }, props: { cabin } }));
@@ -51,10 +52,16 @@ const metaDescription = `${cabin.headline}. Self-catering holiday home${where}.$
             width={cabin.cover.width}
             height={cabin.cover.height}
             fetchpriority="high"
+            {...responsive(cabin.cover, '100vw')}
           />
         )}
         <div class="hero-scrim"></div>
-        <h1>{cabin.name}</h1>
+        <!-- The cabin's name alone says nothing about where it is, and the H1 is one of the
+             strongest on-page signals for local searches like "cabin Kirkjubæjarklaustur". -->
+        <h1>
+          {cabin.name}
+          {cabin.place?.locality && <span class="h1-place">{cabin.place.locality}, South Iceland</span>}
+        </h1>
       </div>
     </div>
   </section>
@@ -96,6 +103,7 @@ const metaDescription = `${cabin.headline}. Self-catering holiday home${where}.$
             width={img.width}
             height={img.height}
             loading="lazy"
+            {...responsive(img, '(min-width: 900px) 33vw, (min-width: 600px) 50vw, 100vw')}
           />
         ))}
       </div>
@@ -155,6 +163,16 @@ const metaDescription = `${cabin.headline}. Self-catering holiday home${where}.$
     color: var(--ground);
     font-size: clamp(38px, 7vw, 80px);
     max-width: 16ch;
+  }
+  .h1-place {
+    display: block;
+    margin-top: 14px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    line-height: 1.3;
+    text-transform: uppercase;
+    font-weight: 600;
   }
 
   section { margin-top: 72px; }

@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import TourBookingDialog from '../components/TourBookingDialog.astro';
 import TourInfoDialog from '../components/TourInfoDialog.astro';
 import { organization, website } from '../lib/schema.js';
+import { responsive } from '../lib/img.js';
 import cabinData from '../content/cabins.json';
 import tourData from '../content/tours.generated.json';
 import home from '../content/home.json';
@@ -42,7 +43,8 @@ const ticker = ['ticker-1', 'ticker-2', 'ticker-3', 'ticker-4', 'ticker-5', 'tic
   <section class="hero">
     <div class="shell">
       <div class="hero-frame">
-        <img src={img.hero.src} alt={img.hero.alt} width={img.hero.width} height={img.hero.height} fetchpriority="high" />
+        <img src={img.hero.src} alt={img.hero.alt} width={img.hero.width} height={img.hero.height} fetchpriority="high"
+             {...responsive(img.hero, '100vw')} />
         <div class="scrim"></div>
         <div class="hero-content">
           <p class="eyebrow light">{home.hero.eyebrow}</p>
@@ -78,7 +80,8 @@ const ticker = ['ticker-1', 'ticker-2', 'ticker-3', 'ticker-4', 'ticker-5', 'tic
         </div>
         {cabin.cover && (
           <a class="card-img" href={`/cabins/${cabin.slug}`} aria-label={`View ${cabin.name}`}>
-            <img src={cabin.cover.src} alt={cabin.cover.alt || cabin.name} width={cabin.cover.width} height={cabin.cover.height} loading="lazy" />
+            <img src={cabin.cover.src} alt={cabin.cover.alt || cabin.name} width={cabin.cover.width} height={cabin.cover.height} loading="lazy"
+                 {...responsive(cabin.cover, '(min-width: 810px) 50vw, 100vw')} />
           </a>
         )}
       </article>
@@ -106,7 +109,8 @@ const ticker = ['ticker-1', 'ticker-2', 'ticker-3', 'ticker-4', 'ticker-5', 'tic
   <section class="ticker reveal" aria-hidden="true">
     <div class="ticker-track">
       {[...ticker, ...ticker].map((t) => (
-        <img src={t.src} alt="" width={t.width} height={t.height} loading="lazy" />
+        <img src={t.src} alt="" width={t.width} height={t.height} loading="lazy"
+             {...responsive(t, `${Math.round((260 * t.width) / t.height)}px`)} />
       ))}
     </div>
   </section>
@@ -169,7 +173,8 @@ const ticker = ['ticker-1', 'ticker-2', 'ticker-3', 'ticker-4', 'ticker-5', 'tic
 
   <!-- About us -->
   <section class="shell about reveal" id="about-us">
-    <img src={img.about.src} alt={img.about.alt} width={img.about.width} height={img.about.height} loading="lazy" />
+    <img src={img.about.src} alt={img.about.alt} width={img.about.width} height={img.about.height} loading="lazy"
+         {...responsive(img.about, '(min-width: 810px) 50vw, 100vw')} />
     <div class="about-copy">
       <p class="eyebrow">{home.about.eyebrow}</p>
       <h2>{home.about.body}</h2>
@@ -276,6 +281,7 @@ const ticker = ['ticker-1', 'ticker-2', 'ticker-3', 'ticker-4', 'ticker-5', 'tic
   /* Ticker */
   .ticker { overflow: hidden; }
   .ticker-track { display: flex; gap: 12px; width: max-content; animation: slide 60s linear infinite; }
+  /* 260px is also the height the ticker's sizes attribute is computed from. */
   .ticker-track img { height: 260px; width: auto; border-radius: 10px; object-fit: cover; }
   @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
