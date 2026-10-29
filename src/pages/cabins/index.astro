@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import data from '../../content/cabins.json';
 import { breadcrumb } from '../../lib/schema.js';
+import { responsive } from '../../lib/img.js';
 
 // On Framer this page rendered entirely in the browser: the served HTML was an empty 24 KB
 // shell headed "Blog", so search engines saw nothing. Here it is prerendered like every
@@ -28,7 +29,8 @@ const cabins = data.cabins;
         {cabin.cover && (
           <a class="card-img" href={`/cabins/${cabin.slug}`} aria-label={`View ${cabin.name}`}>
             <img src={cabin.cover.src} alt={cabin.cover.alt || cabin.name}
-                 width={cabin.cover.width} height={cabin.cover.height} loading="lazy" />
+                 width={cabin.cover.width} height={cabin.cover.height} loading="lazy"
+                 {...responsive(cabin.cover, '(min-width: 810px) 50vw, 100vw')} />
           </a>
         )}
         <div class="card-copy">

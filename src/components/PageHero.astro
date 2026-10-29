@@ -1,6 +1,8 @@
 ---
 // Shared hero for the inner pages: full-bleed image, scrim, eyebrow + heading + optional CTA.
 // Same shape the Framer pages used, so /tours and /book-now stay consistent with the home page.
+import { responsive } from '../lib/img.js';
+
 interface Props {
   image: { src: string; alt: string; width: number; height: number };
   eyebrow: string;
@@ -13,7 +15,8 @@ const { image, eyebrow, heading, cta } = Astro.props;
 <section class="hero">
   <div class="shell">
     <div class="frame">
-      <img src={image.src} alt={image.alt} width={image.width} height={image.height} fetchpriority="high" />
+      <img src={image.src} alt={image.alt} width={image.width} height={image.height} fetchpriority="high"
+           {...responsive(image, '100vw')} />
       <div class="scrim"></div>
       <div class="content">
         <p class="eyebrow">{eyebrow}</p>
