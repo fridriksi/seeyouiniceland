@@ -67,13 +67,15 @@ export const cabinSchema = (cabin) => {
 
   const amenities = cabin.amenities || [];
   const says = (re) => amenities.some((a) => re.test(a));
+  // Facts from Hostly's own schema (scripts/sync-cabins.mjs). An explicit house rule there beats
+  // guessing from the amenity wording.
+  const listing = cabin.listing || {};
+  const flag = (hostly, fromAmenities) => (typeof hostly === 'boolean' ? hostly : fromAmenities);
 
   // LodgingBusiness, not VacationRental. VacationRental is a subtype, so Google validated the
   // same node against both specs: it passed as a local business and failed as a vacation
-  // rental. That spec belongs to Google's Vacation Rentals partner programme and demands
-  // identifier, checkinTime, checkoutTime, coordinates and a data feed — none of which Hostly
-  // gives us, and inventing check-in times to silence the error would be a lie in the one
-  // block a search engine reads as fact.
+  // rental. That spec belongs to Google's Vacation Rentals partner programme and demands an
+  // identifier and a data feed from an approved partner, which Hostly is not.
   const node = {
     '@context': 'https://schema.org',
     '@type': 'LodgingBusiness',
@@ -85,11 +87,15 @@ export const cabinSchema = (cabin) => {
     // Only stated when the amenity list actually says so. An amenity list that is silent about
     // pets is not the same as one that forbids them, and "petsAllowed: false" would be us
     // making that claim on the owner's behalf.
-    petsAllowed: says(/pets allowed/i) ? true : undefined,
-    smokingAllowed: says(/no smoking/i) ? false : undefined,
-    // Hostly does not report a currency with its nightly rates, so no price is declared here.
-    // A number without the right currency would be a false claim, and this is the one block a
+    petsAllowed: flag(listing.petsAllowed, says(/pets allowed/i) ? true : undefined),
+    smokingAllowed: flag(listing.smokingAllowed, says(/no smoking/i) ? false : undefined),
+    // Only declared when Hostly's schema states it with its currency ("€260–€360 per night"):
+    // a bare number in the wrong currency would be a false claim, and this is the one block a
     // search engine reads as fact.
+    priceRange: listing.currency ? listing.priceRange : undefined,
+    currenciesAccepted: listing.priceRange ? listing.currency : undefined,
+    checkinTime: listing.checkinTime,
+    checkoutTime: listing.checkoutTime,
     numberOfRooms: Number(String(cabin.bedroomsLabel || '').match(/^(\d+)/)?.[1]) || undefined,
     occupancy: cabin.maxGuests
       ? { '@type': 'QuantitativeValue', maxValue: cabin.maxGuests, unitText: 'guests' }
@@ -110,8 +116,11 @@ export const cabinSchema = (cabin) => {
       addressCountry: place.country || 'IS',
     };
   }
-  if (place.latitude && place.longitude) {
-    node.geo = { '@type': 'GeoCoordinates', latitude: place.latitude, longitude: place.longitude };
+  // The hand-set pin in cabins.meta.json wins; otherwise the one placed in Hostly.
+  const lat = place.latitude ?? listing.latitude;
+  const lng = place.longitude ?? listing.longitude;
+  if (typeof lat === 'number' && typeof lng === 'number') {
+    node.geo = { '@type': 'GeoCoordinates', latitude: lat, longitude: lng };
   }
   if (cabin.size) node.floorSize = { '@type': 'QuantitativeValue', name: cabin.size };
   if (cabin.mapsLink) node.hasMap = cabin.mapsLink;

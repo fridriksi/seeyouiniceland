@@ -59,6 +59,17 @@ for (const p of properties) {
   const avail = await getJson(`/widget/${TENANT}/${p.id}/availability`);
   const pricing = avail.pricing || {};
 
+  // Hostly's widget "details for Google" block. It is not pasted onto the page as-is: that
+  // would put a second LodgingBusiness on every cabin page, one whose home is app.hostly.is.
+  // Only the facts the site has no other source for are kept; cabinSchema() merges them into
+  // the site's own node. A failure here just leaves them out.
+  let ld = {};
+  try {
+    ld = (await getJson(`/widget/${TENANT}/schema?property=${p.id}`)).ld || {};
+  } catch (err) {
+    console.warn(`  no schema for ${p.name}: ${err.message}`);
+  }
+
   cabins.push({
     ...m,
     propertyId: p.id,
@@ -68,6 +79,16 @@ for (const p of properties) {
     minStay: (pricing.minStayRules || {}).default || 1,
     priceFrom: Math.min(Number(pricing.priceLow) || 0, Number(pricing.priceHigh) || 0) || null,
     cleaningFee: Number(pricing.cleaningFee) || 0,
+    listing: {
+      priceRange: ld.priceRange,
+      currency: ld.currenciesAccepted,
+      checkinTime: ld.checkinTime,
+      checkoutTime: ld.checkoutTime,
+      petsAllowed: ld.petsAllowed,
+      smokingAllowed: ld.smokingAllowed,
+      latitude: ld.geo?.latitude,
+      longitude: ld.geo?.longitude,
+    },
   });
 }
 

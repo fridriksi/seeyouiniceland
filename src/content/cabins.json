@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-08-21T23:16:45.337Z",
+  "syncedAt": "2026-10-29T10:49:10.658Z",
   "cabins": [
     {
       "slug": "secluded-cabin",
@@ -83,7 +83,17 @@
       "maxGuests": 4,
       "minStay": 1,
       "priceFrom": 260,
-      "cleaningFee": 100
+      "cleaningFee": 100,
+      "listing": {
+        "priceRange": "€260–€360 per night",
+        "currency": "EUR",
+        "checkinTime": "16:00",
+        "checkoutTime": "11:00",
+        "petsAllowed": true,
+        "smokingAllowed": false,
+        "latitude": 63.784747,
+        "longitude": -18.033158
+      }
     },
     {
       "slug": "luxury-home-hveragerdi",
@@ -184,7 +194,17 @@
       "maxGuests": 10,
       "minStay": 3,
       "priceFrom": 1000,
-      "cleaningFee": 150
+      "cleaningFee": 150,
+      "listing": {
+        "priceRange": "€1000 per night",
+        "currency": "EUR",
+        "checkinTime": "16:00",
+        "checkoutTime": "11:00",
+        "petsAllowed": false,
+        "smokingAllowed": false,
+        "latitude": 64.000269,
+        "longitude": -21.17992
+      }
     }
   ]
 }
