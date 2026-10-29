@@ -5,6 +5,7 @@
 // clean URLs here keeps the sitemap saying exactly what the canonicals say.
 
 import cabinData from '../content/cabins.json';
+import isCopy from '../content/cabins.is.json';
 
 const SITE = 'https://www.seeyouiniceland.is';
 
@@ -22,8 +23,11 @@ export async function GET() {
     path: `/cabins/${c.slug}`,
     lastmod: cabinData.syncedAt,
   }));
+  const icelandic = cabinData.cabins
+    .filter((c) => isCopy[c.slug])
+    .map((c) => ({ path: isCopy[c.slug].path, lastmod: cabinData.syncedAt }));
 
-  const urls = [...PAGES, ...cabins]
+  const urls = [...PAGES, ...cabins, ...icelandic]
     .map(({ path, lastmod }) => {
       const loc = `${SITE}${path === '/' ? '/' : path}`;
       const stamp = lastmod ? `\n    <lastmod>${String(lastmod).slice(0, 10)}</lastmod>` : '';

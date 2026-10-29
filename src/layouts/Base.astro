@@ -12,9 +12,16 @@ interface Props {
   jsonLd?: object[];
   /** Keep the page out of search results and emit no canonical (e.g. the 404 page). */
   noindex?: boolean;
+  /** 'en' (default) or 'is'. */
+  lang?: 'en' | 'is';
+  /** The same page in each language, for hreflang. Include this page itself. */
+  alternates?: { hreflang: string; path: string }[];
 }
 
-const { title, description = '', socialImage, jsonLd = [], noindex = false } = Astro.props;
+const { title, description = '', socialImage, jsonLd = [], noindex = false, lang = 'en', alternates = [] } =
+  Astro.props;
+const htmlLang = lang === 'is' ? 'is' : 'en-GB';
+const ogLocale = lang === 'is' ? 'is_IS' : 'en_GB';
 
 // build.format 'file' makes Astro.url.pathname '/tours.html' and '/index.html', so the naive
 // canonical pointed at URLs that answer with a 308 to the clean path — telling search engines
@@ -27,13 +34,14 @@ const canonical = new URL(canonicalPath, Astro.site).href;
 ---
 
 <!doctype html>
-<html lang="en-GB" class="no-js">
+<html lang={htmlLang} class="no-js">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={new URL(a.path, Astro.site).href} />)}
 
     <!-- Google only accepts a favicon that is square and a multiple of 48px, and it also probes
          /favicon.ico directly. The old 32x32 met neither condition, so the search result kept
@@ -48,7 +56,7 @@ const canonical = new URL(canonicalPath, Astro.site).href;
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="See you in Iceland" />
-    <meta property="og:locale" content="en_GB" />
+    <meta property="og:locale" content={ogLocale} />
     <meta property="og:title" content={title} />
     {description && <meta property="og:description" content={description} />}
     {!noindex && <meta property="og:url" content={canonical} />}

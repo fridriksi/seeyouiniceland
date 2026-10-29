@@ -1,3 +1,16 @@
+# Search engines and AI assistants are welcome; the AI answer engines are named explicitly so a
+# blanket rule added later cannot shut them out by accident. They fetch a page to answer a
+# person's question and cite it with a link, which is how a cabin ends up in a ChatGPT, Claude
+# or Perplexity answer.
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+Allow: /
+Disallow: /api/
+
 # /api/ is the TourDesk booking proxy (functions/api/tourdesk) — nothing there for a crawler.
 User-agent: *
 Disallow: /api/
