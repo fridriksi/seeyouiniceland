@@ -8,3 +8,4 @@ dist/
 .wrangler/
 # Responsive image variants, regenerated before every build (scripts/build-responsive-images.mjs).
 public/img/**/*.w*.webp
+node_modules

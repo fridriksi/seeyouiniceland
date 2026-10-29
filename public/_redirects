@@ -5,3 +5,8 @@
 # The source is written with its full origin so the rule can only ever match the bare apex.
 # A bare "/*" here would match www as well and loop forever.
 https://seeyouiniceland.is/* https://www.seeyouiniceland.is/:splat 301
+
+# Old Framer URLs that Bing still has indexed. Until the 404 page existed they answered with the
+# home page, so they show up as duplicate titles; a 301 hands any links they carry to the cabin.
+/cabins/lakeview-cabin /cabins/secluded-cabin 301
+/secludedcabin /cabins/secluded-cabin 301
