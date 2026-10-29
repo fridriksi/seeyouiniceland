@@ -37,37 +37,37 @@
   },
   "ticker-1": {
     "src": "/img/home/ticker-1.webp",
-    "alt": "",
+    "alt": "A bright living room with snow outside the windows",
     "width": 1440,
     "height": 1920
   },
   "ticker-2": {
     "src": "/img/home/ticker-2.webp",
-    "alt": "",
+    "alt": "Fjaðrárgljúfur canyon, a short drive from the cabin",
     "width": 1209,
     "height": 768
   },
   "ticker-3": {
     "src": "/img/home/ticker-3.webp",
-    "alt": "",
+    "alt": "A waterfall falling through woodland in South Iceland",
     "width": 1280,
     "height": 853
   },
   "ticker-4": {
     "src": "/img/home/ticker-4.webp",
-    "alt": "",
+    "alt": "Kirkjugólf basalt slabs at sunset near Kirkjubæjarklaustur",
     "width": 2000,
     "height": 1331
   },
   "ticker-5": {
     "src": "/img/home/ticker-5.webp",
-    "alt": "",
+    "alt": "Svartifoss waterfall and its black basalt columns, with a rainbow",
     "width": 1400,
     "height": 934
   },
   "ticker-6": {
     "src": "/img/home/ticker-6.webp",
-    "alt": "",
+    "alt": "Icebergs on Jökulsárlón glacier lagoon",
     "width": 1024,
     "height": 683
   }

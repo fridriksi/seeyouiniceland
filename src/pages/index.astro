@@ -109,7 +109,7 @@ const ticker = ['ticker-1', 'ticker-2', 'ticker-3', 'ticker-4', 'ticker-5', 'tic
   <section class="ticker reveal" aria-hidden="true">
     <div class="ticker-track">
       {[...ticker, ...ticker].map((t) => (
-        <img src={t.src} alt="" width={t.width} height={t.height} loading="lazy"
+        <img src={t.src} alt={t.alt} width={t.width} height={t.height} loading="lazy"
              {...responsive(t, `${Math.round((260 * t.width) / t.height)}px`)} />
       ))}
     </div>
