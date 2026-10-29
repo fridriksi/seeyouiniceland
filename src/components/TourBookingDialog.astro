@@ -1,0 +1,522 @@
+---
+// The TourDesk booking dialog: date, time, party size, then handoff to the operator's
+// checkout, which takes the payment.
+//
+// It is deliberately separate from the cards that open it. Drop this component on any page
+// and give any element `class="tc-book" data-tour="{uniqueKey}" data-title="..."` — the tour
+// grid on /tours and the three cards on the front page share this one implementation.
+//
+// Every network call goes through /api/tourdesk so the API key stays on the server.
+---
+
+<dialog class="td-dialog" id="tdDialog" aria-labelledby="tdTitle">
+  <form method="dialog" class="td-close-form">
+    <button class="td-close" aria-label="Close">&#215;</button>
+  </form>
+
+  <h3 id="tdTitle"></h3>
+  <p class="td-sub"></p>
+
+  <div class="td-step" data-step="date">
+    <div class="td-cal-head">
+      <button type="button" class="td-nav" data-dir="-1" aria-label="Previous month">&#8249;</button>
+      <span class="td-month"></span>
+      <button type="button" class="td-nav" data-dir="1" aria-label="Next month">&#8250;</button>
+    </div>
+    <div class="td-dow"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+    <div class="td-grid"></div>
+  </div>
+
+  <div class="td-step" data-step="time" hidden>
+    <p class="td-label">Choose a time</p>
+    <div class="td-times"></div>
+  </div>
+
+  <div class="td-step" data-step="pax" hidden>
+    <div class="td-variants" hidden>
+      <p class="td-label">Option</p>
+      <div class="td-variant-list"></div>
+    </div>
+    <p class="td-label td-pax-label">Travellers</p>
+    <div class="td-cats"></div>
+    <div class="td-total"><span>Total</span><strong class="td-total-value"></strong></div>
+    <button type="button" class="td-go">Continue to checkout</button>
+    <p class="td-note">You will finish and pay on the tour operator&#39;s secure checkout page.</p>
+  </div>
+
+  <p class="td-status" role="status"></p>
+</dialog>
+
+<!-- is:global is required, not a shortcut. Astro scopes styles by stamping a data-astro-cid
+     attribute onto the component's markup at build time, but the calendar days, time buttons,
+     price rows and quantity steppers below are all built by JavaScript at runtime — they never
+     get that attribute, so scoped rules would silently never match them. Everything here is
+     namespaced .td-/.tc- so going global collides with nothing. -->
+<style is:global>
+  /* The button that opens this dialog, wherever it is used: the tour grid on /tours, the
+     featured cards on the front page. */
+  .tc-book {
+    background: var(--slate);
+    color: #fff;
+    border: 0;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .tc-book:hover { filter: brightness(1.1); }
+
+  /* ---- dialog ---- */
+  .td-dialog {
+    width: min(440px, calc(100vw - 32px));
+    /* A tour with several price categories and a long list of departure times runs past the
+       bottom of a phone screen; scroll the dialog rather than losing the checkout button. */
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    border: 0;
+    border-radius: 16px;
+    padding: 24px;
+    color: inherit;
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(15, 25, 35, 0.25);
+  }
+  .td-dialog::backdrop { background: rgba(16, 24, 32, 0.55); }
+  .td-close-form { display: flex; justify-content: flex-end; margin: -8px -8px 0 0; }
+  .td-close {
+    border: 0; background: transparent; cursor: pointer;
+    font-size: 26px; line-height: 1; color: var(--slate); padding: 4px 8px;
+  }
+  .td-dialog h3 { font-size: 19px; line-height: 1.3; padding-right: 8px; }
+  .td-sub { font-size: 13px; color: var(--slate); margin-top: 4px; }
+  .td-step { margin-top: 18px; }
+  .td-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--slate); margin-bottom: 8px; }
+
+  .td-cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .td-month { font-size: 15px; font-weight: 600; }
+  .td-nav { border: 0; background: #f1f4f6; border-radius: 8px; width: 30px; height: 30px; font-size: 17px; cursor: pointer; color: var(--slate); }
+  .td-nav[disabled] { opacity: 0.35; cursor: default; }
+
+  .td-dow, .td-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .td-dow span { text-align: center; font-size: 11px; color: var(--slate); padding-bottom: 4px; }
+  .td-day {
+    aspect-ratio: 1; border: 0; border-radius: 8px; background: #f6f8f9;
+    font: inherit; font-size: 13px; color: #b6bfc6; cursor: default;
+  }
+  .td-day.is-open { background: #e4ecf2; color: var(--ink, #292d30); cursor: pointer; font-weight: 500; }
+  .td-day.is-open:hover { background: #d3e0ea; }
+  .td-day.is-sel { background: var(--slate); color: #fff; }
+  .td-day.is-blank { background: transparent; }
+
+  .td-times { display: flex; flex-wrap: wrap; gap: 8px; }
+  .td-time {
+    border: 1px solid #d8dee2; background: #fff; border-radius: 999px;
+    font: inherit; font-size: 14px; padding: 8px 16px; cursor: pointer;
+  }
+  .td-time.is-sel { background: var(--slate); border-color: var(--slate); color: #fff; }
+  .td-time[disabled] { opacity: 0.4; cursor: default; text-decoration: line-through; }
+
+  .td-variant {
+    display: block; width: 100%; text-align: left; margin-bottom: 6px;
+    border: 1px solid #d8dee2; background: #fff; border-radius: 10px;
+    font: inherit; font-size: 14px; padding: 10px 12px; cursor: pointer;
+  }
+  .td-variant.is-sel { border-color: var(--slate); box-shadow: inset 0 0 0 1px var(--slate); }
+
+  .td-cat {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 12px 0; border-bottom: 1px solid #eef1f3;
+  }
+  .td-cat:last-child { border-bottom: 0; }
+  .td-cat-name { font-size: 14px; line-height: 1.35; }
+  .td-cat-meta { font-size: 12px; color: var(--slate); margin-top: 2px; }
+
+  /* 34px buttons with real space between them: at 28px and a 10px gap the minus, the count
+     and the plus read as one squashed blob, which is the first thing people notice. */
+  .td-step-btns { display: flex; align-items: center; gap: 7px; flex: none; }
+  .td-qty-btn {
+    width: 34px; height: 34px; border-radius: 50%; border: 1px solid #d8dee2;
+    background: #fff; font: inherit; font-size: 18px; line-height: 1; cursor: pointer;
+    color: var(--slate); display: flex; align-items: center; justify-content: center;
+    padding: 0; transition: background 0.15s, border-color 0.15s;
+  }
+  .td-qty-btn:hover:not([disabled]) { background: #f1f4f6; border-color: #b9c3ca; }
+  .td-qty-btn[disabled] { opacity: 0.3; cursor: default; }
+  .td-qty { min-width: 30px; text-align: center; font-size: 15px; font-variant-numeric: tabular-nums; }
+
+  .td-total { display: flex; justify-content: space-between; align-items: baseline; margin: 14px 0 12px; font-size: 15px; }
+  .td-total strong { font-size: 19px; }
+  .td-go {
+    width: 100%; border: 0; background: var(--slate); color: #fff;
+    font: inherit; font-size: 15px; font-weight: 500; padding: 13px; border-radius: 999px; cursor: pointer;
+  }
+  .td-go[disabled] { opacity: 0.45; cursor: default; }
+  .td-note { font-size: 12px; color: var(--slate); text-align: center; margin-top: 9px; line-height: 1.5; }
+  .td-status { font-size: 13px; margin-top: 12px; color: #b3261e; min-height: 1em; }
+  .td-status.is-busy { color: var(--slate); }
+</style>
+
+<script>
+  // Booking flow: pick a date, pick a time, pick who is coming, then hand off to the
+  // operator's checkout. Every network call goes to our own /api/tourdesk proxy — the
+  // TourDesk key is a server-side secret and must never appear in this file.
+  const API = '/api/tourdesk';
+  const dialog = document.getElementById('tdDialog') as HTMLDialogElement | null;
+  if (dialog) {
+    const $ = (sel: string) => dialog.querySelector(sel) as HTMLElement;
+    const titleEl = $('#tdTitle');
+    const subEl = $('.td-sub');
+    const monthEl = $('.td-month');
+    const gridEl = $('.td-grid');
+    const timesEl = $('.td-times');
+    const catsEl = $('.td-cats');
+    const variantsWrap = $('.td-variants');
+    const variantList = $('.td-variant-list');
+    const totalEl = $('.td-total-value');
+    const paxLabel = $('.td-pax-label');
+    const goBtn = $('.td-go') as HTMLButtonElement;
+    const statusEl = $('.td-status');
+    const stepTime = dialog.querySelector('[data-step="time"]') as HTMLElement;
+    const stepPax = dialog.querySelector('[data-step="pax"]') as HTMLElement;
+
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    let tourId = '';
+    let cursor = new Date();      // first of the month currently drawn
+    let openDates = new Set<string>();
+    let openList: string[] = [];  // sorted, so the calendar knows where the season starts
+    let selDate = '';
+    let slots: any[] = [];
+    let slot: any = null;
+    let variant: any = null;
+    let qty: Record<string, number> = {};
+    let currency = 'ISK';
+
+    const iso = (d: Date) =>
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const monthKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+
+    // TourDesk formats ISK as 6.590 ISK; match it rather than inventing a second style.
+    const money = (n: number) =>
+      `${Math.round(n).toLocaleString('de-DE')} ${currency}`;
+
+    function say(msg: string, busy = false) {
+      statusEl.textContent = msg;
+      statusEl.classList.toggle('is-busy', busy);
+    }
+
+    async function get(path: string) {
+      const res = await fetch(`${API}/${path}`);
+      if (!res.ok) throw new Error(String(res.status));
+      return res.json();
+    }
+
+    // One call covers the next twelve months. Fetching month by month looked tidier but left
+    // seasonal tours — the ice caves run November to March — showing an empty August calendar
+    // with no hint that the season simply has not started.
+    async function loadAvailability() {
+      const today = new Date();
+      const until = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
+      const days = await get(`TourAvailability/GetDateRange/${tourId}/${iso(today)}/${iso(until)}`);
+      openList = (Array.isArray(days) ? days : []).map((s: string) => String(s).slice(0, 10)).sort();
+      openDates = new Set(openList);
+    }
+
+    const monthOf = (date: string) => new Date(Number(date.slice(0, 4)), Number(date.slice(5, 7)) - 1, 1);
+
+    function drawCalendar() {
+      monthEl.textContent = `${MONTHS[cursor.getMonth()]} ${cursor.getFullYear()}`;
+
+      const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
+      const daysInMonth = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
+      // getDay() is Sunday-first; the header row is Monday-first.
+      const lead = (first.getDay() + 6) % 7;
+
+      const cells: string[] = [];
+      for (let i = 0; i < lead; i++) cells.push('<button class="td-day is-blank" disabled></button>');
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = iso(new Date(cursor.getFullYear(), cursor.getMonth(), day));
+        const open = openDates.has(date);
+        const sel = date === selDate;
+        cells.push(
+          `<button type="button" class="td-day${open ? ' is-open' : ''}${sel ? ' is-sel' : ''}"` +
+            `${open ? ` data-date="${date}"` : ' disabled'}>${day}</button>`
+        );
+      }
+      gridEl.innerHTML = cells.join('');
+
+      // Bound the arrows to the season so nobody pages through empty months looking for it.
+      const firstMonth = openList.length ? monthOf(openList[0]) : first;
+      const lastMonth = openList.length ? monthOf(openList[openList.length - 1]) : first;
+      (dialog.querySelector('.td-nav[data-dir="-1"]') as HTMLButtonElement).disabled = cursor <= firstMonth;
+      (dialog.querySelector('.td-nav[data-dir="1"]') as HTMLButtonElement).disabled = cursor >= lastMonth;
+
+      // A month with no departures inside an otherwise open season needs saying out loud.
+      // Name the next month that does run rather than the season's span: a tour that goes
+      // every August reads as running "August to August", which tells nobody anything.
+      const monthHasDays = cells.some((c) => c.includes('is-open'));
+      if (!monthHasDays && openList.length) {
+        const after = iso(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0));
+        const next = openList.find((d) => d > after);
+        const when = next ? monthOf(next) : null;
+        subEl.textContent = when
+          ? `No departures in ${MONTHS[cursor.getMonth()]}. Next available: ${MONTHS[when.getMonth()]} ${when.getFullYear()}.`
+          : `No departures in ${MONTHS[cursor.getMonth()]}.`;
+      } else {
+        subEl.textContent = 'Select a date to see times and prices.';
+      }
+    }
+
+    async function pickDate(date: string) {
+      selDate = date;
+      slot = null;
+      variant = null;
+      stepPax.hidden = true;
+      goBtn.disabled = true;   // never leave the previous day's enabled state behind
+      drawCalendar();
+      stepTime.hidden = false;
+      timesEl.innerHTML = '';
+      say('Loading times…', true);
+      try {
+        const day = await get(`TourAvailability/${tourId}/${date}/en`);
+        slots = Array.isArray(day) ? day : [];
+      } catch {
+        slots = [];
+        say('Could not load times for that day. Please try another date.');
+        return;
+      }
+      say('');
+      // TourDesk's calendar endpoint and its per-day endpoint disagree on roughly one day in
+      // thirty — usually a departure whose booking cutoff has passed. Close the day off so
+      // nobody clicks the same dead end twice.
+      if (!slots.some((s) => s.bookable && !s.soldOut && !s.unavailable)) {
+        timesEl.innerHTML = '<p class="td-cat-meta">No departures left on this day — please pick another.</p>';
+        openDates.delete(date);
+        openList = openList.filter((d) => d !== date);
+        selDate = '';
+        drawCalendar();
+        return;
+      }
+      timesEl.innerHTML = slots
+        .map((s, i) => {
+          const bookable = s.bookable && !s.soldOut && !s.unavailable;
+          const label = s.timeless ? 'Any time' : s.hourFormatted || '';
+          return `<button type="button" class="td-time" data-slot="${i}"${bookable ? '' : ' disabled'}>${label}</button>`;
+        })
+        .join('');
+      // A single departure is not a choice; select it so the traveller sees prices at once.
+      const only = slots.findIndex((s) => s.bookable && !s.soldOut && !s.unavailable);
+      if (slots.length === 1 && only === 0) pickSlot(0);
+    }
+
+    function pickSlot(index: number) {
+      slot = slots[index];
+      timesEl.querySelectorAll('.td-time').forEach((b, i) =>
+        b.classList.toggle('is-sel', i === index)
+      );
+      const vs = (slot.variants || []).filter((v: any) => v.available !== false);
+      variantsWrap.hidden = vs.length < 2;
+      if (vs.length > 1) {
+        variantList.innerHTML = vs
+          .map(
+            (v: any, i: number) =>
+              `<button type="button" class="td-variant" data-variant="${i}">${v.title}` +
+              `${v.description ? `<br><span class="td-cat-meta">${v.description}</span>` : ''}</button>`
+          )
+          .join('');
+      }
+      pickVariant(vs[0], 0);
+      stepPax.hidden = false;
+    }
+
+    function pickVariant(v: any, index: number) {
+      variant = v;
+      variantList.querySelectorAll('.td-variant').forEach((b, i) =>
+        b.classList.toggle('is-sel', i === index)
+      );
+      qty = {};
+      const cats = catList();
+      // Seed the default category with its initCount so the total is never 0 on open.
+      const def = cats.find((c: any) => c.isDefault) || cats[0];
+      if (def) qty[String(def.priceCategoryId)] = Math.max(1, def.initCount || 1);
+      drawCats();
+    }
+
+    const catList = () =>
+      (variant?.pricePerCategories || slot?.pricePerCategories || slot?.priceCategories || []).filter(
+        (c: any) => !c.hidePrice
+      );
+
+    // Volume pricing: tiers give a per-person price that depends on how many are booked.
+    function unitPrice(cat: any, n: number) {
+      const tiers = cat.tiers || [];
+      const hit = tiers.find((t: any) => n >= (t.min ?? 0) && n <= (t.max ?? Infinity));
+      return Number((hit ? hit.price : cat.price) ?? cat.price ?? 0);
+    }
+
+    function seatsUsed() {
+      return catList().reduce(
+        (sum: number, c: any) => sum + (qty[String(c.priceCategoryId)] || 0) * (c.occupancy ?? 1),
+        0
+      );
+    }
+
+    function seatLimit() {
+      const left = slot?.unlimitedAvailability ? Infinity : Number(slot?.availabilityCount ?? Infinity);
+      const max = Number(variant?.maxPerBooking ?? slot?.maxParticipants ?? Infinity) || Infinity;
+      return Math.min(left, max);
+    }
+
+    function drawCats() {
+      const cats = catList();
+      currency = 'ISK';
+      catsEl.innerHTML = cats
+        .map((c: any) => {
+          const id = String(c.priceCategoryId);
+          const n = qty[id] || 0;
+          const meta = [c.ageLimitFormatted, c.formattedPrice].filter(Boolean).join(' · ');
+          const atMax = seatsUsed() + (c.occupancy ?? 1) > seatLimit();
+          return (
+            `<div class="td-cat"><div><div class="td-cat-name">${c.title}</div>` +
+            `<div class="td-cat-meta">${meta}</div></div>` +
+            `<div class="td-step-btns">` +
+            `<button type="button" class="td-qty-btn" data-cat="${id}" data-delta="-1"${n === 0 ? ' disabled' : ''}>&minus;</button>` +
+            `<span class="td-qty">${n}</span>` +
+            `<button type="button" class="td-qty-btn" data-cat="${id}" data-delta="1"${atMax ? ' disabled' : ''}>+</button>` +
+            `</div></div>`
+          );
+        })
+        .join('');
+
+      let total = 0;
+      const people = cats.reduce((s: number, c: any) => s + (qty[String(c.priceCategoryId)] || 0), 0);
+      for (const c of cats) {
+        const n = qty[String(c.priceCategoryId)] || 0;
+        if (!n) continue;
+        total += c.chargePerBooking ? unitPrice(c, people) : unitPrice(c, people) * n;
+      }
+      totalEl.textContent = money(total);
+
+      const min = Math.max(
+        Number(variant?.minPerBooking) || 1,
+        Number(slot?.minParticipants) || 1
+      );
+      // The dialog seeds the minimum party, so the warning below almost never fires — say the
+      // minimum out loud instead, or the pre-filled count of 4 looks like the form guessing.
+      paxLabel.textContent = min > 1 ? `Travellers — minimum ${min}` : 'Travellers';
+
+      goBtn.disabled = people === 0 || seatsUsed() < min;
+      if (people > 0 && seatsUsed() < min) say(`This departure takes a minimum of ${min}.`);
+      else if (statusEl.textContent?.startsWith('This departure')) say('');
+    }
+
+    async function checkout() {
+      const cats = catList();
+      const priceCategories = cats
+        .map((c: any) => ({ priceCategoryId: String(c.priceCategoryId), quantity: qty[String(c.priceCategoryId)] || 0 }))
+        .filter((c: any) => c.quantity > 0);
+
+      goBtn.disabled = true;
+      say('Reserving your seats…', true);
+      try {
+        const res = await fetch(`${API}/TourBooking/${tourId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            isWidget: false,
+            availabilityId: String(slot.activityAvailabilityId),
+            pickup: false,
+            returnUrl: `${location.origin}/tours`,
+            priceCategories,
+            ...(variant?.activityVariantId ? { variantId: String(variant.activityVariantId) } : {}),
+          }),
+        });
+        const data = await res.json();
+        if (data.success && data.checkoutUrl) {
+          location.href = data.checkoutUrl;
+          return;
+        }
+        say(data.reason || 'That departure could not be reserved. Please try another time.');
+      } catch {
+        say('Something went wrong. Please try again.');
+      }
+      goBtn.disabled = false;
+    }
+
+    // ---- wiring ----
+    document.querySelectorAll('.tc-book').forEach((btn) =>
+      btn.addEventListener('click', async () => {
+        tourId = (btn as HTMLElement).dataset.tour || '';
+        titleEl.textContent = (btn as HTMLElement).dataset.title || '';
+        subEl.textContent = '';
+        openDates = new Set();
+        openList = [];
+        selDate = '';
+        slots = [];
+        slot = null;
+        variant = null;
+        cursor = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        stepTime.hidden = true;
+        stepPax.hidden = true;
+        gridEl.innerHTML = '';
+        monthEl.textContent = '';
+        say('Loading dates…', true);
+        dialog.showModal();
+
+        try {
+          await loadAvailability();
+        } catch {
+          say('Could not load dates just now. Please try again in a moment.');
+          return;
+        }
+        say('');
+        if (!openList.length) {
+          subEl.textContent = 'This tour has no dates open at the moment.';
+          return;
+        }
+        // Open on the first month that actually has departures, not on today.
+        const start = monthOf(openList[0]);
+        if (start > cursor) cursor = start;
+        drawCalendar();
+      })
+    );
+
+    dialog.querySelectorAll('.td-nav').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const dir = Number((btn as HTMLElement).dataset.dir);
+        cursor = new Date(cursor.getFullYear(), cursor.getMonth() + dir, 1);
+        drawCalendar();
+      })
+    );
+
+    gridEl.addEventListener('click', (e) => {
+      const day = (e.target as HTMLElement).closest('[data-date]') as HTMLElement | null;
+      if (day) pickDate(day.dataset.date!);
+    });
+
+    timesEl.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement).closest('[data-slot]') as HTMLButtonElement | null;
+      if (t && !t.disabled) pickSlot(Number(t.dataset.slot));
+    });
+
+    variantList.addEventListener('click', (e) => {
+      const v = (e.target as HTMLElement).closest('[data-variant]') as HTMLElement | null;
+      if (!v) return;
+      const i = Number(v.dataset.variant);
+      pickVariant((slot.variants || []).filter((x: any) => x.available !== false)[i], i);
+    });
+
+    catsEl.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest('[data-cat]') as HTMLButtonElement | null;
+      if (!b || b.disabled) return;
+      const id = b.dataset.cat!;
+      const delta = Number(b.dataset.delta);
+      qty[id] = Math.max(0, (qty[id] || 0) + delta);
+      drawCats();
+    });
+
+    goBtn.addEventListener('click', checkout);
+  }
+</script>

@@ -1,0 +1,117 @@
+{
+  "hero": {
+    "eyebrow": "Unwind in nature.",
+    "heading": [
+      "Charming cabins",
+      "for a cosy retreat."
+    ],
+    "body": "Two self-catering homes in South Iceland: a secluded cabin for four right on the lake near Kirkjubæjarklaustur, and a six-bedroom family house with a hot tub in Hveragerði."
+  },
+  "cabinsIntro": {
+    "eyebrow": "Our cabins",
+    "body": "Two cozy and charming places to stay in South Iceland, near some of the region's most popular natural wonders."
+  },
+  "reviews": {
+    "eyebrow": "Reviews",
+    "heading": "Don't just take our word for it!",
+    "body": "We have great reviews from our past guests. The reviews often mention the serenity and amazing nature around the cabins.",
+    "items": [
+      {
+        "title": "We'd love to go back",
+        "body": "We chose this house because of its location in an extremely quiet area, cottage in front of a beautiful pond. We had a great time. The house was very clean and cozy, as described. We'd love to go back",
+        "author": "Luca"
+      },
+      {
+        "title": "Amazing view, perfectly located",
+        "body": "Amazing view, perfectly located. the lake in front if the house and the walk along the lake was beautiful and we would definitely come back again. the house is super cozy and warm. totally recommended!",
+        "author": "Angie"
+      },
+      {
+        "title": "We immediately felt at home",
+        "body": "Very nice and cozy cabin directly on the lake. The location is fantastic. We immediately felt at home. Everything you needed was available. Fridrik was always available and responded quickly. The info and tips were good.",
+        "author": "Matthew"
+      },
+      {
+        "title": "Fantastic location!",
+        "body": "The location of the cottage is really fantastic! Fridrik communicated with us great and very proactively when we were affected by a lock on the ring road when we arrived. Thanks for that!",
+        "author": "Steven"
+      }
+    ]
+  },
+  "location": {
+    "eyebrow": "Location",
+    "heading": "Our cabin is located a short distance from the town Kirkjubæjarklaustur",
+    "body": [
+      "The cabin is located on the South Coast, around a 3-hour drive from Reykjavík. The location is the perfect base for exploring the South Coast with plenty of attraction and natural wonders around.",
+      "Below you can see the distance between the cabin and some of the most popular sites to visit while staying at our cabin."
+    ],
+    "attractions": [
+      {
+        "name": "Seljalandsfoss",
+        "distance": "132 km",
+        "body": "The Seljalandsfoss waterfall drops 60 m (197 ft) and is part of the Seljalands River that has its origin in the volcano glacier Eyjafjallajökull. One of the most remarkable things about this waterfall is that you can walk behind the fall into a small cave."
+      },
+      {
+        "name": "Skógafoss",
+        "distance": "104 km",
+        "body": "Skógafoss is one of the biggest waterfalls in Iceland, the width of the waterfall is 25 metres (82 feet) and the drop of it is 60 m (200 ft). Due to the amount of spray the waterfall consistently produces, a single or double rainbow is normally visible on sunny days."
+      },
+      {
+        "name": "Fjaðrárgljúfur",
+        "distance": "9 km",
+        "body": "A stunning canyon, 2 km long and up to 100 m deep. Easily accessible from the Ring Road."
+      },
+      {
+        "name": "Systrafoss",
+        "distance": "2,7 km",
+        "body": "A beautiful waterfall, 60-80 meters tall. It's has a lot of folklore and history around it and a must stop when in South Iceland."
+      },
+      {
+        "name": "Kirkjugólf",
+        "distance": "2 km",
+        "body": "Kirkjugólf, or 'the church floor,' is an 80 square meter expanse of columnar basalt stone slabs that slowly eroded when the sea covered the area."
+      },
+      {
+        "name": "Svartifoss",
+        "distance": "69 km",
+        "body": "Svartifoss is a stunning waterfall, 20 metres tall, and black columnar basalt formations beautifully frame the waterfall and give it its name, Black Fall."
+      },
+      {
+        "name": "Jökulsárlón",
+        "distance": "123 km",
+        "body": "Jökulsárlón is Iceland's most famous glacier lagoon and a popular stop for those traveling along the South Coast or around the Ring Road of the country."
+      }
+    ]
+  },
+  "tours": {
+    "eyebrow": "Our recommended tours",
+    "heading": "Explore South Iceland with our trusted partners",
+    "items": [
+      {
+        "tour": "34934-1",
+        "body": "Are you fascinated with lava, volcanoes, and geology? Would you like to see red-hot lava up close in a safe environment? See molten lava flow, hear it sizzle and feel its heat — just along the coast from the cabins."
+      },
+      {
+        "tour": "9210-1",
+        "body": "A full day in the highland valley of Þórsmörk with Midgard, crossing glacial rivers by super jeep. Roads and route are chosen on the day to suit the conditions."
+      },
+      {
+        "tour": "216599-1",
+        "body": "Two and a half hours on a buggy with Southcoast Adventure, setting out from their base on Road 249 and taking in a little of everything the south has to offer. Two people per booking."
+      }
+    ],
+    "_comment": "Three tours featured on the front page. The name, photo and price come from TourDesk via tours.generated.json — only the id and the blurb live here. If you change a tour, check the blurb still describes it. The build fails if an id is not in the TourDesk template."
+  },
+  "about": {
+    "eyebrow": "About us",
+    "body": "We are a family-owned business that offer guests cosy cabin escapes for the ultimate Icelandic experience."
+  },
+  "contact": {
+    "eyebrow": "Contact us",
+    "heading": [
+      "Have a question?",
+      "Send us a message"
+    ],
+    "email": "info@seeyouiniceland.is"
+  }
+}

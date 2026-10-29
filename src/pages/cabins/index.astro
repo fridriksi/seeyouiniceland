@@ -1,0 +1,86 @@
+---
+import Base from '../../layouts/Base.astro';
+import data from '../../content/cabins.json';
+import { breadcrumb } from '../../lib/schema.js';
+
+// On Framer this page rendered entirely in the browser: the served HTML was an empty 24 KB
+// shell headed "Blog", so search engines saw nothing. Here it is prerendered like every
+// other page, with a real title and the cabin copy in the markup.
+const cabins = data.cabins;
+---
+
+<Base
+  title="Self-catering cabins in South Iceland | See you in Iceland"
+  description="Cozy and charming vacation cabins in South Iceland, near some of the region's most popular natural wonders."
+  socialImage={cabins[0]?.cover?.src}
+  jsonLd={[
+    breadcrumb([{ name: 'Home', path: '/' }, { name: 'Cabins', path: '/cabins' }]),
+  ]}
+>
+  <section class="shell head">
+    <p class="eyebrow">Our cabins</p>
+    <h1>Cozy and charming vacation cabins in South Iceland</h1>
+  </section>
+
+  <section class="shell grid">
+    {cabins.map((cabin) => (
+      <article class="card reveal">
+        {cabin.cover && (
+          <a class="card-img" href={`/cabins/${cabin.slug}`} aria-label={`View ${cabin.name}`}>
+            <img src={cabin.cover.src} alt={cabin.cover.alt || cabin.name}
+                 width={cabin.cover.width} height={cabin.cover.height} loading="lazy" />
+          </a>
+        )}
+        <div class="card-copy">
+          <p class="eyebrow">{cabin.name}</p>
+          <h2>{cabin.headline}</h2>
+          <p class="meta">
+            {cabin.guestsLabel || `Up to ${cabin.maxGuests} guests`}<br />
+            {cabin.bedroomsLabel}
+            {cabin.minStay > 1 && <><br />Minimum stay {cabin.minStay} nights</>}
+          </p>
+          <a class="more" href={`/cabins/${cabin.slug}`}>View details</a>
+        </div>
+      </article>
+    ))}
+  </section>
+</Base>
+
+<style>
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--slate);
+  }
+
+  .head {
+    padding-top: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .head h1 { font-size: clamp(32px, 5.5vw, 64px); max-width: 18ch; }
+
+  .grid {
+    margin-top: 40px;
+    display: grid;
+    gap: 24px;
+  }
+  @media (min-width: 810px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-img img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  .card-copy { padding: 26px; display: flex; flex-direction: column; gap: 10px; }
+  .card-copy h2 { font-size: clamp(22px, 2.6vw, 32px); }
+  .meta { font-size: 14px; line-height: 1.5; }
+  .more { font-size: 14px; font-weight: 600; color: var(--slate); text-decoration: none; }
+</style>

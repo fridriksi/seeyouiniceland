@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "src": "/img/home/hero.webp",
+    "alt": "A cabin under the northern lights in South Iceland",
+    "width": 1920,
+    "height": 1232
+  },
+  "about": {
+    "src": "/img/home/about.webp",
+    "alt": "The family behind See you in Iceland",
+    "width": 1370,
+    "height": 878
+  },
+  "tour-lava-show": {
+    "src": "/img/home/tour-lava-show.webp",
+    "alt": "Lava Show in Vík",
+    "width": 2000,
+    "height": 1500
+  },
+  "tour-midgard": {
+    "src": "/img/home/tour-midgard.webp",
+    "alt": "Midgard Surprise tour",
+    "width": 1000,
+    "height": 694
+  },
+  "tour-buggy": {
+    "src": "/img/home/tour-buggy.webp",
+    "alt": "Buggy Classic Tour",
+    "width": 1000,
+    "height": 694
+  },
+  "location-map": {
+    "src": "/img/home/location-map.webp",
+    "alt": "Map of South Iceland showing the cabin location",
+    "width": 1252,
+    "height": 1299
+  },
+  "ticker-1": {
+    "src": "/img/home/ticker-1.webp",
+    "alt": "",
+    "width": 1440,
+    "height": 1920
+  },
+  "ticker-2": {
+    "src": "/img/home/ticker-2.webp",
+    "alt": "",
+    "width": 1209,
+    "height": 768
+  },
+  "ticker-3": {
+    "src": "/img/home/ticker-3.webp",
+    "alt": "",
+    "width": 1280,
+    "height": 853
+  },
+  "ticker-4": {
+    "src": "/img/home/ticker-4.webp",
+    "alt": "",
+    "width": 2000,
+    "height": 1331
+  },
+  "ticker-5": {
+    "src": "/img/home/ticker-5.webp",
+    "alt": "",
+    "width": 1400,
+    "height": 934
+  },
+  "ticker-6": {
+    "src": "/img/home/ticker-6.webp",
+    "alt": "",
+    "width": 1024,
+    "height": 683
+  }
+}

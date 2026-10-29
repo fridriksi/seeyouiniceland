@@ -1,0 +1,111 @@
+/* Design tokens read straight off the published Framer site so the rebuild matches rather
+   than approximates. The four colours are the project's own tokens; the type metrics are the
+   computed values from the live pages.
+
+   Framer token id                        value     used for
+   006f91fb-091c-44dd-b791-c307673b19ed   #4b6681   eyebrows, buttons, links
+   2d69466f-a909-4000-869d-861cdebc5ab4   #4c5257   body copy
+   5894e357-746a-41e0-9c01-9dc2c6afdf46   #292d30   headings on light ground
+   a860ac62-416b-4fd9-b797-d35b1b8d9cd4   #e7e7e7   page ground                                */
+
+:root {
+  --slate: #4b6681;
+  --body-ink: #4c5257;
+  --heading-ink: #292d30;
+  --ground: #e7e7e7;
+  --surface: #ffffff;
+  --rule: rgba(12, 12, 12, 0.12); /* the project's "grey border" token */
+
+  /* Display face. Reckless Neue Medium is licensed to Framer, not to us — until that is
+     settled this falls back through faces with comparable proportions. One swap here moves
+     the whole site. */
+  --font-display: "Reckless Neue", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-body: "Switzer", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Live-site metrics: display runs at line-height 1.0 with -0.04em tracking,
+     body at 1.2 with -0.03em. */
+  --display-tracking: -0.04em;
+  --display-leading: 1.0;
+  --body-tracking: -0.03em;
+  --body-leading: 1.2;
+
+  /* The published Framer site is fluid, not capped: at a 2560px viewport its sections still
+     span the full width, and only a few inner containers stop — the cabin cards at 1630px,
+     the reviews and contact blocks at 1440px. Long copy is held back by its own max-width
+     rather than by a narrow page, so wide monitors fill instead of showing grey margins.
+     1200px here was the Framer *canvas* width, which is a design surface, not a limit. */
+  --page-max: 1630px;
+  --page-max-narrow: 1440px;
+  --gutter: 24px;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--body-ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: var(--body-leading);
+  letter-spacing: var(--body-tracking);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--heading-ink);
+  line-height: var(--display-leading);
+  letter-spacing: var(--display-tracking);
+  margin: 0;
+  text-wrap: balance;
+}
+
+p { margin: 0; }
+
+/* height:auto matters. The width/height attributes on <img> map to presentational hints, and
+   the height hint outranks aspect-ratio — without this, an image with height="1500" renders
+   1500px tall no matter what aspect-ratio the layout asks for. Rules that genuinely want a
+   fixed height still set one explicitly and win. */
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: inherit; }
+a:focus-visible,
+button:focus-visible { outline: 2px solid var(--slate); outline-offset: 3px; }
+
+.shell {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Sections the original holds back further — reviews and contact. */
+.shell--narrow { max-width: var(--page-max-narrow); }
+
+/* Full-bleed: nav bar, footer and the ticker run edge to edge on the original. */
+.shell--wide { max-width: none; }
+
+/* Framer plays an appear animation on nearly every section. Reproduced with one class plus
+   an IntersectionObserver, so it degrades to plain visible content without JS. */
+.reveal {
+  opacity: 0;
+  transform: translateY(90px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* No JS: never leave content hidden behind an animation that will not run. */
+.no-js .reveal { opacity: 1; transform: none; }

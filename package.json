@@ -1,0 +1,22 @@
+{
+  "name": "seeyouiniceland-site",
+  "private": true,
+  "type": "module",
+  "description": "seeyouiniceland.is — static site, rebuilt off Framer onto Cloudflare Pages",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "sync-cabins": "node scripts/sync-cabins.mjs",
+    "sync-tours": "node scripts/sync-tours.mjs",
+    "find-tours": "node scripts/find-tours.mjs",
+    "pages-dev": "wrangler pages dev",
+    "deploy": "astro build && wrangler pages deploy",
+    "build-favicons": "node scripts/build-favicons.mjs"
+  },
+  "devDependencies": {
+    "astro": "^7.2.3",
+    "sharp": "^0.35.3",
+    "wrangler": "^4.124.0"
+  }
+}

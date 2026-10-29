@@ -1,0 +1,20 @@
+{
+  "tours-hero": {
+    "src": "/img/pages/tours-hero.webp",
+    "alt": "Northern lights over the Icelandic landscape",
+    "width": 2000,
+    "height": 1125
+  },
+  "car-rental": {
+    "src": "/img/pages/car-rental.webp",
+    "alt": "Blue Car Rental",
+    "width": 301,
+    "height": 601
+  },
+  "book-now-hero": {
+    "src": "/img/pages/book-now-hero.webp",
+    "alt": "A vacation cabin in South Iceland",
+    "width": 1536,
+    "height": 2048
+  }
+}

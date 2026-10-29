@@ -1,0 +1,61 @@
+---
+// The Hostly booking widget, embedded directly rather than through a page builder's HTML
+// embed. That removes the nested-iframe arrangement the Framer site needed, and with it the
+// height deadlock: here the widget's own postMessage sizes the one iframe on the page.
+interface Props {
+  /** Hostly property id. Omit for the multi-property picker. */
+  propertyId?: string;
+  /** Hostly experience id. Takes precedence over propertyId. */
+  experienceId?: string;
+  title?: string;
+}
+
+const { propertyId, experienceId, title } = Astro.props;
+
+const TENANT = 't_mqa67f3xykkee';
+const params = new URLSearchParams({ tenant: TENANT });
+if (experienceId) params.set('experience', experienceId);
+else if (propertyId) params.set('property', propertyId);
+else params.set('multi', '1');
+if (title) params.set('title', title);
+// Match the site's own tokens so the widget does not arrive in Hostly's default indigo.
+params.set('primary', '#4b6681');
+params.set('text', '#292d30');
+params.set('bg', '#ffffff');
+params.set('radius', '12');
+
+const src = `https://app.hostly.is/widget/view?${params.toString()}`;
+const initialHeight = experienceId ? 560 : 1200;
+---
+
+<iframe
+  class="hostly-widget"
+  src={src}
+  title={experienceId ? 'Book this experience' : 'Book your stay'}
+  style={`height:${initialHeight}px`}
+  loading="lazy"
+></iframe>
+
+<style>
+  .hostly-widget {
+    width: 100%;
+    max-width: 600px;
+    border: 0;
+    display: block;
+    margin-inline: auto;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    // Hostly reports its rendered height; grow or shrink the frame to match so the form is
+    // never clipped and never leaves a gap.
+    window.addEventListener('message', function (e) {
+      if (!e.data || e.data.type !== 'cabin-widget-height') return;
+      var h = Math.max(400, e.data.height);
+      document.querySelectorAll('iframe.hostly-widget').forEach(function (f) {
+        if (f.contentWindow === e.source) f.style.height = h + 'px';
+      });
+    });
+  })();
+</script>

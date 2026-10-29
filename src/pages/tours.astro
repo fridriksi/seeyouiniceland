@@ -1,0 +1,100 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import BookingWidget from '../components/BookingWidget.astro';
+import TourGrid from '../components/TourGrid.astro';
+import img from '../content/img.pages.json';
+import tourData from '../content/tours.generated.json';
+import { breadcrumb, tourListSchema } from '../lib/schema.js';
+
+// The Hveragerdi walking tour, sold through Hostly.
+const EXPERIENCE_ID = 'x_mshcxhkzvuptj';
+---
+
+<Base
+  title="Tours in South Iceland | See you in Iceland"
+  description="We have hand-selected our favorite tours with our partner companies. Our local partners offer unforgettable experiences. Join us for guided adventures that showcase the beauty of Iceland's natural landscapes!"
+  socialImage={img['tours-hero'].src}
+  jsonLd={[
+    tourListSchema(tourData.tours),
+    breadcrumb([{ name: 'Home', path: '/' }, { name: 'Tours', path: '/tours' }]),
+  ]}
+>
+  <PageHero
+    image={img['tours-hero']}
+    eyebrow="Experience Iceland"
+    heading="Book your adventure"
+    cta={{ text: 'Book accommodation', href: '/book-now' }}
+  />
+
+  <section class="shell own-tour reveal">
+    <p class="eyebrow">Our own tour</p>
+    <h2>Explore Hveragerði with a local</h2>
+    <BookingWidget experienceId={EXPERIENCE_ID} />
+  </section>
+
+  <section class="shell partners reveal">
+    <p class="eyebrow">More tours from our partners</p>
+    <h2>Hand-picked adventures around the south</h2>
+    <p class="partners-intro">
+      Check live availability and book in a few clicks. Most of these leave from close to the
+      cabins, and every one is run by a licensed local operator.
+    </p>
+    <TourGrid />
+  </section>
+
+  <section class="shell car reveal">
+    <div class="car-copy">
+      <h2>Create your personalized journey with our prefered car rental</h2>
+      <p>Book your car through Blue Car Rental and receive a discount when booking!</p>
+      <a class="btn" href="https://www.bluecarrental.is/?affiliate=Seeyouiniceland" target="_blank" rel="noopener">
+        Book here
+      </a>
+    </div>
+    <a class="car-img" href="https://www.bluecarrental.is/?affiliate=Seeyouiniceland" target="_blank" rel="noopener" aria-label="Blue Car Rental">
+      <img src={img['car-rental'].src} alt={img['car-rental'].alt}
+           width={img['car-rental'].width} height={img['car-rental'].height} loading="lazy" />
+    </a>
+  </section>
+</Base>
+
+<style>
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--slate);
+  }
+  section { margin-top: 72px; }
+
+  .own-tour { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+  .own-tour h2 { font-size: clamp(26px, 3.6vw, 44px); max-width: 20ch; }
+  .own-tour :global(iframe) { margin-top: 10px; }
+
+  .car { display: grid; gap: 28px; align-items: center; }
+  /* The artwork is a 301x601 portrait banner. Sizing its column as a fraction of the page
+     stretched it to roughly 600x1200 — double its own resolution, and taller than everything
+     else on the page. Give the column the image's real width instead and it stays sharp. */
+  @media (min-width: 810px) { .car { grid-template-columns: 1fr 301px; gap: 56px; } }
+  .car-copy { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+  .car-copy h2 { font-size: clamp(24px, 3vw, 38px); max-width: 20ch; }
+  .car-copy p { font-size: 15px; line-height: 1.6; max-width: 52ch; }
+  .car-img { display: block; max-width: 301px; }
+  .car-img img { width: 100%; border-radius: 12px; }
+
+  .btn {
+    background: var(--slate);
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 11px 22px;
+    border-radius: 999px;
+  }
+
+  .partners { display: flex; flex-direction: column; gap: 12px; }
+  .partners h2 { font-size: clamp(24px, 3vw, 38px); max-width: 22ch; }
+  .partners-intro { font-size: 15px; line-height: 1.6; max-width: 58ch; color: var(--slate); }
+  .partners :global(.tours-grid) { margin-top: 20px; }
+</style>

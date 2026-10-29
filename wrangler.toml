@@ -1,0 +1,5 @@
+# Pins this directory as its own Cloudflare Pages project. Without it wrangler walks up the
+# tree and picks up an unrelated worker's config from a parent folder.
+name = "seeyouiniceland"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-08-20"

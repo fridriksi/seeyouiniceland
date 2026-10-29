@@ -1,0 +1,351 @@
+---
+import Base from '../layouts/Base.astro';
+import TourBookingDialog from '../components/TourBookingDialog.astro';
+import TourInfoDialog from '../components/TourInfoDialog.astro';
+import { organization, website } from '../lib/schema.js';
+import cabinData from '../content/cabins.json';
+import tourData from '../content/tours.generated.json';
+import home from '../content/home.json';
+import img from '../content/img.home.json';
+
+const cabins = cabinData.cabins;
+
+// The three featured tours book right here rather than sending people to /tours.
+//
+// Name, photo and price all come from the synced TourDesk data — never from home.json. A
+// hand-picked photo drifts the moment a tour is swapped in the TourDesk template: the buggy
+// card spent a day showing a black Polaris at the Hveragerdi hot springs while the tour on
+// sale was red buggies fording a glacial river for a different operator. Only the blurb is
+// ours, because it is written in the site's voice.
+const tourById = new Map(tourData.tours.map((t) => [t.id, t]));
+const featuredTours = home.tours.items.map((item) => {
+  const tour = tourById.get(item.tour);
+  if (!tour) {
+    // Fail the build rather than ship a card nobody can book.
+    throw new Error(
+      `Front page features tour "${item.tour}", which is not in the TourDesk template. ` +
+        `Add it there and run npm run sync-tours, or point the card at a tour that is.`
+    );
+  }
+  return { blurb: item.body, tour };
+});
+const ticker = ['ticker-1', 'ticker-2', 'ticker-3', 'ticker-4', 'ticker-5', 'ticker-6'].map((k) => img[k]);
+---
+
+<Base
+  title="Holiday cabins in South Iceland | See you in Iceland"
+  description="Two self-catering holiday homes in South Iceland — a waterfront cabin near Kirkjubaejarklaustur and a family house in Hveragerdi — plus hand-picked tours you can book online."
+  jsonLd={[organization(), website()]}
+  socialImage={img.hero?.src}
+>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="shell">
+      <div class="hero-frame">
+        <img src={img.hero.src} alt={img.hero.alt} width={img.hero.width} height={img.hero.height} fetchpriority="high" />
+        <div class="scrim"></div>
+        <div class="hero-content">
+          <p class="eyebrow light">{home.hero.eyebrow}</p>
+          <h1>{home.hero.heading[0]}<br />{home.hero.heading[1]}</h1>
+          <p class="hero-body">{home.hero.body}</p>
+          <div class="actions">
+            <a class="btn" href="/book-now">Book now</a>
+            <a class="btn ghost" href="/tours">View tours</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our cabins -->
+  <section class="shell intro reveal" id="cabins">
+    <p class="eyebrow">{home.cabinsIntro.eyebrow}</p>
+    <h2>{home.cabinsIntro.body}</h2>
+  </section>
+
+  <!-- Cabin cards -->
+  <section class="shell cards">
+    {cabins.map((cabin) => (
+      <article class="card reveal">
+        <div class="card-copy">
+          <p class="eyebrow">{cabin.name}</p>
+          <h3>{cabin.headline}</h3>
+          <p class="card-meta">
+            {cabin.guestsLabel || `Up to ${cabin.maxGuests} guests`}<br />
+            {cabin.bedroomsLabel}
+          </p>
+          <a class="more" href={`/cabins/${cabin.slug}`}>View details</a>
+        </div>
+        {cabin.cover && (
+          <a class="card-img" href={`/cabins/${cabin.slug}`} aria-label={`View ${cabin.name}`}>
+            <img src={cabin.cover.src} alt={cabin.cover.alt || cabin.name} width={cabin.cover.width} height={cabin.cover.height} loading="lazy" />
+          </a>
+        )}
+      </article>
+    ))}
+  </section>
+
+  <!-- Reviews -->
+  <section class="shell shell--narrow intro reveal" id="reviews">
+    <p class="eyebrow">{home.reviews.eyebrow}</p>
+    <h2>{home.reviews.heading}</h2>
+    <p class="lede">{home.reviews.body}</p>
+  </section>
+
+  <section class="shell reviews reveal">
+    {home.reviews.items.map((r) => (
+      <blockquote class="review">
+        <h3>{r.title}</h3>
+        <p>{r.body}</p>
+        <cite>{r.author}</cite>
+      </blockquote>
+    ))}
+  </section>
+
+  <!-- Image ticker -->
+  <section class="ticker reveal" aria-hidden="true">
+    <div class="ticker-track">
+      {[...ticker, ...ticker].map((t) => (
+        <img src={t.src} alt="" width={t.width} height={t.height} loading="lazy" />
+      ))}
+    </div>
+  </section>
+
+  <!-- Location and attractions. The published section is copy only — the image that used to
+       sit here was the Ferðamálastofa licence badge, which belongs in the footer. -->
+  <section class="shell location reveal" id="location">
+    <div class="location-head">
+      <p class="eyebrow">{home.location.eyebrow}</p>
+      <h2>{home.location.heading}</h2>
+      {home.location.body.map((p) => <p class="lede">{p}</p>)}
+    </div>
+  </section>
+
+  <section class="shell attractions reveal">
+    {home.location.attractions.map((a) => (
+      <div class="attraction">
+        <h3>{a.name}</h3>
+        <p>{a.body}</p>
+        <span class="distance">{a.distance}</span>
+      </div>
+    ))}
+  </section>
+
+  <!-- Tours -->
+  <section class="shell intro reveal" id="tours">
+    <p class="eyebrow">{home.tours.eyebrow}</p>
+    <h2>{home.tours.heading}</h2>
+    <a class="btn" href="/tours">View tours</a>
+  </section>
+
+  <section class="shell tour-grid reveal">
+    {featuredTours.map(({ tour, blurb }) => (
+      <article class="tour">
+        <img src={tour.image} alt={tour.title} loading="lazy" decoding="async" />
+        <div class="tour-body">
+          <h3>{tour.title}</h3>
+          <p>{blurb}</p>
+          <div class="tour-foot">
+            {tour.priceFormatted && (
+              <span class="tour-price">
+                from <strong>{tour.priceFormatted}</strong>
+                {tour.minParty > 1 && <em>per person</em>}
+              </span>
+            )}
+            <div class="tour-actions">
+              <button type="button" class="tc-info" data-tour={tour.id}>More info</button>
+              <button type="button" class="tc-book" data-tour={tour.id} data-title={tour.title}>
+                Check dates
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <TourBookingDialog />
+  <TourInfoDialog only={featuredTours.map((f) => f.tour.id)} />
+
+  <!-- About us -->
+  <section class="shell about reveal" id="about-us">
+    <img src={img.about.src} alt={img.about.alt} width={img.about.width} height={img.about.height} loading="lazy" />
+    <div class="about-copy">
+      <p class="eyebrow">{home.about.eyebrow}</p>
+      <h2>{home.about.body}</h2>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="shell shell--narrow contact reveal" id="contact-us">
+    <p class="eyebrow">{home.contact.eyebrow}</p>
+    <h2>{home.contact.heading[0]}<br />{home.contact.heading[1]}</h2>
+    <a class="btn" href={`mailto:${home.contact.email}`}>Contact us</a>
+  </section>
+</Base>
+
+<style>
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--slate);
+  }
+  .eyebrow.light { color: var(--ground); }
+  .lede { font-size: 15px; line-height: 1.6; max-width: 62ch; }
+
+  .btn {
+    background: var(--slate);
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 11px 22px;
+    border-radius: 999px;
+    display: inline-block;
+    width: fit-content;
+  }
+  .btn.ghost { background: transparent; border: 1px solid var(--ground); color: var(--ground); }
+
+  section { margin-top: 72px; }
+
+  /* Hero */
+  .hero { margin-top: 0; padding-top: 90px; }
+  .hero-frame {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    min-height: calc(100vh - 114px);
+    display: flex;
+    align-items: flex-end;
+    padding: 56px;
+  }
+  .hero-frame > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.5); }
+  .hero-content { position: relative; display: flex; flex-direction: column; gap: 18px; max-width: 760px; }
+  .hero-content h1 { color: var(--ground); font-size: clamp(40px, 7.5vw, 92px); }
+  .hero-body { color: var(--ground); font-size: 15px; line-height: 1.6; max-width: 56ch; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* Section intros */
+  .intro { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+  .intro h2 { font-size: clamp(26px, 3.6vw, 44px); max-width: 22ch; }
+
+  /* Cabin cards */
+  .cards { display: flex; flex-direction: column; gap: 24px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 15px;
+    overflow: hidden;
+    display: grid;
+    gap: 0;
+  }
+  @media (min-width: 810px) { .card { grid-template-columns: 1fr 1fr; } }
+  .card-copy { padding: 30px; display: flex; flex-direction: column; gap: 12px; justify-content: space-between; }
+  .card-copy h3 { font-size: clamp(24px, 2.8vw, 38px); }
+  .card-meta { font-size: 14px; line-height: 1.5; }
+  .more { font-size: 14px; font-weight: 600; color: var(--slate); text-decoration: none; }
+  .card-img { display: block; }
+  .card-img img { width: 100%; height: 100%; min-height: 320px; object-fit: cover; }
+
+  /* Reviews */
+  .reviews { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .review {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 22px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .review h3 { font-size: 19px; }
+  .review p { font-size: 14px; line-height: 1.55; }
+  .review cite {
+    font-style: normal;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--slate);
+    font-weight: 600;
+  }
+
+  /* Ticker */
+  .ticker { overflow: hidden; }
+  .ticker-track { display: flex; gap: 12px; width: max-content; animation: slide 60s linear infinite; }
+  .ticker-track img { height: 260px; width: auto; border-radius: 10px; object-fit: cover; }
+  @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+
+  /* Location */
+  .location-head { display: flex; flex-direction: column; gap: 14px; max-width: 760px; }
+  .location-head h2 { font-size: clamp(26px, 3.4vw, 40px); }
+
+  .attractions { display: grid; gap: 0; border-top: 1px solid var(--rule); }
+  .attraction {
+    display: grid;
+    gap: 6px 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--rule);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 810px) {
+    .attraction { grid-template-columns: 200px 1fr 90px; align-items: start; }
+  }
+  .attraction h3 { font-size: 22px; }
+  .attraction p { font-size: 14px; line-height: 1.55; }
+  .distance {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--slate);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  @media (min-width: 810px) { .distance { text-align: right; } }
+
+  /* Tours */
+  .tour-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .tour {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+  }
+  .tour img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+  .tour-body { padding: 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .tour h3 { font-size: 22px; }
+  .tour p { font-size: 14px; line-height: 1.55; }
+  /* margin-top:auto pins the footer down so the three cards line their prices and buttons up
+     however long the blurb above runs. */
+  .tour-foot {
+    margin-top: auto;
+    padding-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .tour-actions { display: flex; gap: 8px; margin-left: auto; }
+  .tour-price { font-size: 13px; color: var(--slate); }
+  .tour-price strong { font-size: 16px; color: var(--ink, #292d30); display: block; }
+  .tour-price em { font-style: normal; font-size: 11px; display: block; }
+
+  /* About */
+  .about { display: grid; gap: 32px; align-items: center; }
+  @media (min-width: 810px) { .about { grid-template-columns: 1fr 1fr; gap: 48px; } }
+  .about img { width: 100%; border-radius: 12px; }
+  .about-copy { display: flex; flex-direction: column; gap: 14px; }
+  .about-copy h2 { font-size: clamp(24px, 3vw, 38px); }
+
+  /* Contact */
+  .contact { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; padding-bottom: 20px; }
+  .contact h2 { font-size: clamp(28px, 4vw, 52px); }
+</style>

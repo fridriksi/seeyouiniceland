@@ -1,0 +1,6 @@
+{
+  "_comment": "Settings for /tours. The tours themselves come from the TourDesk tour template the API key is attached to ('South Iceland tours') — edit that in TourDesk, then run: npm run sync-tours. Use 'featured' to pull a few ids to the front, 'exclude' to drop one without removing it from the template. Ids are TourDesk uniqueKeys, '{activityId}-{providerId}'; see them in the sync output.",
+
+  "featured": [],
+  "exclude": []
+}

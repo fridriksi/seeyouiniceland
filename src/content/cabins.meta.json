@@ -1,0 +1,174 @@
+{
+  "secluded-cabin": {
+    "order": 1,
+    "headline": "Lakeside cabin, perfect base for the South Coast",
+    "intro": "<p>Our vacation cabin sits right on the shore of Hæðargarðsvatn lake, secluded yet only 2 km from the small town of Kirkjubæjarklaustur. You can walk along the shore straight from the door. A small and cozy cabin, with one bedroom with a double bed and a sleeping loft. The cabin is small and the sleeping loft is not with a full height so adults might find it cramped, so it might be better suited for a family of 4. This is the perfect base for visiting the South Coast of Iceland, with short driving distance to some of the regions major attractions, such as Fjarðárgljúfur, Skaftafell National Park and the Jökulsárlón Glacier Lagoon.</p>",
+    "locationText": "<p dir=\"auto\">The cabin is located 2 km from the village of Kirkjubæjarklaustur and 260 km from Reykjavik. It's close to the main road and is easily accessible all year, although we do recommend a 4x4 during the winter as Icelandic weather conditions can be unpredictable. The road from Reykjavik to our cabin is a easy drive and has the speed limit of 90 km per hour.</p>",
+    "size": "45 square meters",
+    "guestsLabel": "2-4 guests",
+    "bedroomsLabel": "1 bedroom and a sleeping loft",
+    "amenities": [
+      "Living room",
+      "Bathroom with shower",
+      "One bedroom",
+      "Sleeping loft",
+      "Fully-equipped kitchen",
+      "BBQ grill",
+      "Free parking",
+      "Free Wifi"
+    ],
+    "mapsLink": "https://maps.app.goo.gl/kiGfQQsuBZtVUaNu9",
+    "cover": {
+      "src": "/img/cabins/secluded-cabin/cover.webp",
+      "alt": "",
+      "width": 1200,
+      "height": 800
+    },
+    "gallery": [
+      {
+        "src": "/img/cabins/secluded-cabin/gallery-01.webp",
+        "alt": "",
+        "width": 1440,
+        "height": 924
+      },
+      {
+        "src": "/img/cabins/secluded-cabin/gallery-02.webp",
+        "alt": "",
+        "width": 1440,
+        "height": 810
+      },
+      {
+        "src": "/img/cabins/secluded-cabin/gallery-03.webp",
+        "alt": "",
+        "width": 1440,
+        "height": 1080
+      },
+      {
+        "src": "/img/cabins/secluded-cabin/gallery-04.webp",
+        "alt": "",
+        "width": 1440,
+        "height": 1920
+      },
+      {
+        "src": "/img/cabins/secluded-cabin/gallery-05.webp",
+        "alt": "",
+        "width": 1440,
+        "height": 1920
+      },
+      {
+        "src": "/img/cabins/secluded-cabin/gallery-06.webp",
+        "alt": "",
+        "width": 1440,
+        "height": 1920
+      },
+      {
+        "src": "/img/cabins/secluded-cabin/gallery-07.webp",
+        "alt": "",
+        "width": 1440,
+        "height": 1080
+      }
+    ],
+    "propertyId": "p_mqdqfgegfvfd9",
+    "place": {
+      "locality": "Kirkjubæjarklaustur",
+      "region": "Southern Region",
+      "country": "IS",
+      "water": "Hæðargarðsvatn"
+    }
+  },
+  "luxury-home-hveragerdi": {
+    "order": 2,
+    "headline": "House for the whole family, in Hveragerði town",
+    "intro": "<p dir=\"auto\">Relax with the whole family at our beautiful home. Located in the town of Hveragerdi, next to the river Varmá. The house is one of the oldest houses in Hveragerdi and has been owned by the same family since it was built; over the years it has been renovated. The nature is all around and also short walking distance to the local restaurants, super market, art gallery, playground and the local swimming pool.</p><h3 dir=\"auto\">The space</h3><p dir=\"auto\">Our house is on three floors.</p><p dir=\"auto\"><strong>Ground floor:</strong> living room, dining room, kitchen and dining area along with one bedroom (1x double room, 140cm) and a bathroom.</p><p dir=\"auto\"><strong>Second floor:</strong> three bedrooms (2x double rooms with 180cm beds and 1x twin room), TV room, bathroom and a hot tub on the balcony.</p><p dir=\"auto\"><strong>Third floor:</strong> two bedrooms (2x single bed).</p><h3 dir=\"auto\">Guest access</h3><p dir=\"auto\">Guests will have access to all of the house, except for our wardrobe room and the attic.</p>",
+    "locationText": "<p dir=\"auto\">The house is in the town of Hveragerdi, right next to the river Varmá, about 45 km from Reykjavik and a 40 minute drive from Keflavik airport. Everything is within short walking distance: the local restaurants, super market, art gallery, playground and the swimming pool. The road is paved the whole way and easily driven all year round.</p>",
+    "size": null,
+    "guestsLabel": "Up to 10 guests",
+    "bedroomsLabel": "6 bedrooms, 2 bathrooms",
+    "amenities": [
+      "Wi-Fi",
+      "Free parking",
+      "Hot tub",
+      "Deck / patio",
+      "BBQ / grill",
+      "Fireplace",
+      "Radiators",
+      "Fully-equipped kitchen",
+      "Oven",
+      "Microwave",
+      "Fridge",
+      "Dishwasher",
+      "Coffee machine",
+      "Washing machine",
+      "Dryer",
+      "TV",
+      "Workspace",
+      "Garden",
+      "Mountain view",
+      "EV charger",
+      "Crib",
+      "Pets allowed",
+      "Linens & towels",
+      "Smoke alarm",
+      "No smoking"
+    ],
+    "mapsLink": "https://www.google.com/maps/search/?api=1&query=64.000269,-21.17992",
+    "cover": {
+      "src": "/img/cabins/luxury-home-hveragerdi/cover.webp",
+      "alt": "The house from the garden",
+      "width": 1440,
+      "height": 1080
+    },
+    "gallery": [
+      {
+        "src": "/img/cabins/luxury-home-hveragerdi/gallery-01.webp",
+        "alt": "Living room with fireplace",
+        "width": 1440,
+        "height": 1080
+      },
+      {
+        "src": "/img/cabins/luxury-home-hveragerdi/gallery-02.webp",
+        "alt": "Family lounge",
+        "width": 1440,
+        "height": 1080
+      },
+      {
+        "src": "/img/cabins/luxury-home-hveragerdi/gallery-03.webp",
+        "alt": "Kitchen",
+        "width": 1440,
+        "height": 1080
+      },
+      {
+        "src": "/img/cabins/luxury-home-hveragerdi/gallery-04.webp",
+        "alt": "Dining room",
+        "width": 1440,
+        "height": 1080
+      },
+      {
+        "src": "/img/cabins/luxury-home-hveragerdi/gallery-05.webp",
+        "alt": "Bedroom",
+        "width": 1440,
+        "height": 1080
+      },
+      {
+        "src": "/img/cabins/luxury-home-hveragerdi/gallery-06.webp",
+        "alt": "Hot tub",
+        "width": 1440,
+        "height": 1080
+      },
+      {
+        "src": "/img/cabins/luxury-home-hveragerdi/gallery-07.webp",
+        "alt": "Garden and greenhouse",
+        "width": 1440,
+        "height": 1080
+      }
+    ],
+    "propertyId": "p_msx7tiqyuc015",
+    "place": {
+      "locality": "Hveragerði",
+      "region": "Southern Region",
+      "country": "IS",
+      "latitude": 64.000269,
+      "longitude": -21.17992
+    }
+  }
+}

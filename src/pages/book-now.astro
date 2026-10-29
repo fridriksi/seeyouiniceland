@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import BookingWidget from '../components/BookingWidget.astro';
+import img from '../content/img.pages.json';
+---
+
+<Base
+  title="Book now | See you in Iceland"
+  description="Check dates and book one of our two self-catering holiday homes in South Iceland direct — no booking fees, no middleman."
+  socialImage={img['book-now-hero'].src}
+>
+  <PageHero
+    image={img['book-now-hero']}
+    eyebrow="Book now"
+    heading="Book your vacation cabin"
+    cta={{ text: 'View tours', href: '/tours' }}
+  />
+
+  <section class="shell booking reveal">
+    <p class="eyebrow">Availability</p>
+    <h2>Pick your cabin and dates</h2>
+    <!-- No propertyId: the widget shows every cabin Hostly lists publicly, so a new
+         property appears here without touching this page. -->
+    <BookingWidget />
+  </section>
+</Base>
+
+<style>
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--slate);
+  }
+  .booking {
+    margin-top: 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .booking h2 { font-size: clamp(26px, 3.6vw, 44px); }
+  .booking :global(iframe) { margin-top: 10px; }
+</style>

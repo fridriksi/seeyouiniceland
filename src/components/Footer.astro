@@ -1,0 +1,97 @@
+---
+import site from '../content/img.site.json';
+
+const badge = site['ferdamalastofa-badge'];
+const links = [
+  { text: 'Cabins', href: '/#cabins' },
+  { text: 'Reviews', href: '/#reviews' },
+  { text: 'Tours', href: '/tours' },
+  { text: 'About us', href: '/#about-us' },
+  { text: 'Location', href: '/#location' },
+  { text: 'Contact us', href: '/#contact-us' },
+];
+const email = 'info@seeyouiniceland.is';
+const kennitala = '480722-0510';
+---
+
+<footer class="foot">
+  <div class="shell foot-inner">
+    <!-- Light repaint of the same lockup: the navy original all but disappears on the slate
+         ground the footer sits on. -->
+    <img class="lockup" src="/logo-wordmark-light.png" alt="See you in Iceland" width="640" height="258" />
+
+    <nav class="foot-links" aria-label="Footer">
+      {links.map((l) => <a href={l.href}>{l.text}</a>)}
+    </nav>
+
+    <div class="contact">
+      <img
+        class="badge"
+        src={badge.src}
+        alt={badge.alt}
+        width={badge.width}
+        height={badge.height}
+        loading="lazy"
+      />
+      <a href={`mailto:${email}`}>{email}</a>
+      <span>kt: {kennitala}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    background: var(--slate);
+    color: var(--ground);
+    margin-top: 40px;
+    padding-block: 56px 40px;
+    border-radius: 12px 12px 0 0;
+  }
+  .foot-inner {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 810px) {
+    .foot-inner {
+      grid-template-columns: 1.4fr 1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .lockup {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+  }
+
+  .foot-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+  }
+  .foot-links a { color: var(--ground); text-decoration: none; }
+  .foot-links a:hover { text-decoration: underline; }
+
+  .contact {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    align-items: flex-start;
+  }
+  .contact a { color: var(--ground); }
+
+  /* Ferðamálastofa licence badge — a fixed mark, so it keeps its own square proportions. */
+  .badge {
+    width: 140px;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  @media (min-width: 810px) {
+    .contact { text-align: right; align-items: flex-end; }
+  }
+</style>

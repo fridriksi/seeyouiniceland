@@ -1,0 +1,101 @@
+---
+// The tour cards on /tours — the replacement for the Bokun product list.
+//
+// Card content is baked in at build time from src/content/tours.generated.json, which mirrors
+// the TourDesk tour template (run `npm run sync-tours` after editing it there). Availability,
+// prices and the booking itself are live and belong to TourBookingDialog.
+import data from '../content/tours.generated.json';
+import TourBookingDialog from './TourBookingDialog.astro';
+import TourInfoDialog from './TourInfoDialog.astro';
+const tours = data.tours;
+---
+
+<div class="tours-grid">
+  {tours.map((t) => (
+    <article class="tour-card">
+      <div class="tc-media">
+        <img src={t.image} alt={t.title} loading="lazy" decoding="async" />
+      </div>
+      <div class="tc-body">
+        <h3>{t.title}</h3>
+        <p class="tc-blurb">{t.blurb}</p>
+        <ul class="tc-facts">
+          {t.duration && <li>{t.duration}</li>}
+          {t.minimumAge > 0 && <li>Age {t.minimumAge}+</li>}
+          {t.minParty > 1 && <li>Min. {t.minParty} people</li>}
+          {t.pickupService && <li>Pickup available</li>}
+        </ul>
+        <div class="tc-foot">
+          {/* Say "per person" wherever a party minimum means the real total is a multiple of
+              the headline price — 19.990 next to a four-person minimum otherwise misleads. */}
+          <span class="tc-price">
+            from <strong>{t.priceFormatted}</strong>
+            {t.minParty > 1 && <em>per person</em>}
+          </span>
+          <div class="tc-actions">
+            <button type="button" class="tc-info" data-tour={t.id}>More info</button>
+            <button
+              type="button"
+              class="tc-book"
+              data-tour={t.id}
+              data-title={t.title}
+              data-min={t.minParty}
+            >
+              Check dates
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  ))}
+</div>
+
+<TourBookingDialog />
+<TourInfoDialog />
+
+<style>
+  .tours-grid {
+    display: grid;
+    gap: 26px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 620px) { .tours-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .tours-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .tour-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(20, 30, 40, 0.06), 0 8px 24px rgba(20, 30, 40, 0.07);
+  }
+  .tc-media { aspect-ratio: 3 / 2; overflow: hidden; background: #eceff1; }
+  .tc-media img { width: 100%; height: 100%; object-fit: cover; }
+  .tc-body { display: flex; flex-direction: column; gap: 10px; padding: 18px 18px 20px; flex: 1; }
+  .tc-body h3 { font-size: 18px; line-height: 1.3; }
+  .tc-blurb { font-size: 14px; line-height: 1.55; color: var(--slate); }
+
+  .tc-facts { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 0; }
+  .tc-facts li {
+    font-size: 12px;
+    color: var(--slate);
+    background: #f1f4f6;
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
+
+  /* margin-top:auto pins the footer to the bottom so cards of different text length still
+     line their prices and buttons up across the row. Price left, actions right; they wrap onto
+     their own line rather than squeezing the buttons when a card is narrow. */
+  .tc-foot {
+    margin-top: auto; padding-top: 6px;
+    display: flex; flex-wrap: wrap; align-items: flex-end;
+    justify-content: space-between; gap: 10px;
+  }
+  .tc-actions { display: flex; gap: 8px; margin-left: auto; }
+  .tc-price { font-size: 13px; color: var(--slate); }
+  .tc-price strong { font-size: 16px; color: var(--ink, #292d30); display: block; }
+  .tc-price em { font-style: normal; font-size: 11px; display: block; }
+
+</style>

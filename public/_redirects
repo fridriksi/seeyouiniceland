@@ -1,0 +1,7 @@
+# Both hostnames answered every request with 200, so every page existed twice as far as a
+# search engine was concerned. www is the canonical host: it is what astro.config.mjs `site`
+# declares and what every canonical and og:url tag on the site already says.
+#
+# The source is written with its full origin so the rule can only ever match the bare apex.
+# A bare "/*" here would match www as well and loop forever.
+https://seeyouiniceland.is/* https://www.seeyouiniceland.is/:splat 301

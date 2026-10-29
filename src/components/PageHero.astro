@@ -1,0 +1,62 @@
+---
+// Shared hero for the inner pages: full-bleed image, scrim, eyebrow + heading + optional CTA.
+// Same shape the Framer pages used, so /tours and /book-now stay consistent with the home page.
+interface Props {
+  image: { src: string; alt: string; width: number; height: number };
+  eyebrow: string;
+  heading: string;
+  cta?: { text: string; href: string };
+}
+const { image, eyebrow, heading, cta } = Astro.props;
+---
+
+<section class="hero">
+  <div class="shell">
+    <div class="frame">
+      <img src={image.src} alt={image.alt} width={image.width} height={image.height} fetchpriority="high" />
+      <div class="scrim"></div>
+      <div class="content">
+        <p class="eyebrow">{eyebrow}</p>
+        <h1>{heading}</h1>
+        {cta && <a class="btn" href={cta.href}>{cta.text}</a>}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { padding-top: 90px; }
+  .frame {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    min-height: calc(100vh - 114px);
+    display: flex;
+    align-items: flex-end;
+    padding: 56px;
+  }
+  .frame > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.5); }
+  .content { position: relative; display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--ground);
+  }
+  h1 { color: var(--ground); font-size: clamp(40px, 7.5vw, 92px); max-width: 16ch; }
+  .btn {
+    background: var(--slate);
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 11px 22px;
+    border-radius: 999px;
+  }
+
+  @media (max-width: 809.98px) {
+    .frame { padding: 28px; min-height: 70vh; }
+  }
+</style>

@@ -1,0 +1,198 @@
+---
+// Link set copied from the live site. Most entries are anchors into the home page, so they
+// are written absolute — on /tours a relative "#cabins" would go nowhere.
+const links = [
+  { text: 'Cabins', href: '/#cabins' },
+  { text: 'Reviews', href: '/#reviews' },
+  { text: 'Location', href: '/#location' },
+  { text: 'Tours', href: '/tours' },
+  { text: 'About us', href: '/#about-us' },
+  { text: 'Contact us', href: '/#contact-us' },
+];
+---
+
+<header class="nav">
+  <div class="shell nav-inner">
+    <a class="wordmark" href="/">
+      <img src="/logo-wordmark.png" alt="See you in Iceland" width="640" height="258" />
+    </a>
+
+    <nav class="links" aria-label="Main">
+      {links.map((l) => <a href={l.href}>{l.text}</a>)}
+    </nav>
+
+    <a class="cta" href="/book-now">Book now</a>
+
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-overlay">
+      Menu
+    </button>
+  </div>
+</header>
+
+<!-- Deliberately a sibling of the bar, not a child of it. A position:fixed element is laid out
+     against the viewport only while no ancestor establishes a containing block, and .nav does
+     it three ways over: it is itself fixed, it carries backdrop-filter, and it takes a
+     transform when it hides on scroll. Nested inside, this overlay was clipped to the height
+     of the bar on iOS — the menu links spilled out below with no backdrop behind them. -->
+<div class="overlay" id="menu-overlay" hidden>
+  <nav aria-label="Main, mobile">
+    {links.map((l) => <a href={l.href}>{l.text}</a>)}
+    <a href="/book-now">Book now</a>
+  </nav>
+</div>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 10;
+    padding-block: 18px;
+    /* The bar scrolls over hero images and page ground alike, and its links are dark — without
+       a ground of its own the text vanishes against a dark photo. */
+    background: rgba(231, 231, 231, 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: transform 0.35s ease, opacity 0.35s ease;
+  }
+  /* The published site slides the bar out of the way on scroll-down rather than giving it a
+     background. Without this the fixed bar sits on top of whatever scrolls under it. */
+  .nav.is-hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nav { transition: none; }
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .wordmark { display: block; line-height: 0; }
+  .wordmark img {
+    width: auto;
+    height: 46px;
+    display: block;
+  }
+  @media (max-width: 809.98px) {
+    .wordmark img { height: 38px; }
+  }
+  .links {
+    display: flex;
+    gap: 26px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .links a {
+    text-decoration: none;
+    color: var(--heading-ink);
+    padding-block: 2px;
+    border-bottom: 1px solid transparent;
+  }
+  .links a:hover { border-bottom-color: var(--heading-ink); }
+
+  .cta {
+    background: var(--slate);
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 9px 18px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .cta:hover { opacity: 0.9; }
+
+  .menu-toggle {
+    display: none;
+    background: var(--slate);
+    color: #fff;
+    border: 0;
+    font: inherit;
+    font-size: 14px;
+    padding: 9px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Below the bar's 10, not above it: the same Menu button has to stay visible and tappable
+       to close what it opened. */
+    z-index: 9;
+  }
+  /* Without this the display:flex above beats the UA rule for [hidden] and the menu is
+     permanently open over the page. */
+  .overlay[hidden] { display: none; }
+  .overlay nav {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    text-align: center;
+  }
+  .overlay a {
+    font-family: var(--font-display);
+    font-size: 30px;
+    color: var(--ground);
+    text-decoration: none;
+    letter-spacing: var(--display-tracking);
+  }
+
+  /* The live site collapses the inline nav below its 1200px desktop breakpoint. */
+  @media (max-width: 1199.98px) {
+    .links, .cta { display: none; }
+    .menu-toggle { display: inline-block; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var btn = document.querySelector('.menu-toggle');
+    var overlay = document.getElementById('menu-overlay');
+    if (!btn || !overlay) return;
+
+    var bar = document.querySelector('.nav');
+
+    function setOpen(open) {
+      overlay.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+      document.body.style.overflow = open ? 'hidden' : '';
+      // The bar carries the only control that closes this, so it must not be mid-hide.
+      if (open && bar) bar.classList.remove('is-hidden');
+    }
+    btn.addEventListener('click', function () {
+      setOpen(overlay.hidden);
+    });
+    overlay.addEventListener('click', function (e) {
+      // Any link, or the backdrop itself, closes the menu.
+      if (e.target === overlay || e.target.tagName === 'A') setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !overlay.hidden) setOpen(false);
+    });
+
+    // Hide the bar while scrolling down, bring it back on the way up — the behaviour the
+    // published site uses so a fixed bar never covers the section under it.
+    var lastY = window.scrollY;
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        var y = window.scrollY;
+        // Never hide it while the mobile menu is open, or at the very top of the page.
+        if (overlay.hidden && y > 120 && y > lastY) bar.classList.add('is-hidden');
+        else bar.classList.remove('is-hidden');
+        lastY = y;
+        ticking = false;
+      });
+    }, { passive: true });
+  })();
+</script>

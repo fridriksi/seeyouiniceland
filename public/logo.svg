@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="See you in Iceland">
+  <title>See you in Iceland</title>
+  <!-- The peak mark from the wordmark's A, redrawn as vector so it stays crisp at 16px where a
+       downscaled raster goes soft. Colours sampled from the supplied artwork. -->
+  <rect width="32" height="32" rx="6.4" fill="#1b2434"/>
+  <path d="M16 5.4 L28.4 25.9 H24.1 L16 12.1 L7.9 25.9 H3.6 Z" fill="#ffffff"/>
+  <path d="M16 17.5 L20.9 25.9 H11.1 Z" fill="#5b8093"/>
+</svg>

@@ -1,0 +1,137 @@
+---
+import '../styles/tokens.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Absolute or site-relative image for social cards. */
+  socialImage?: string;
+  /** schema.org objects for this page. Emitted as one ld+json block. */
+  jsonLd?: object[];
+}
+
+const { title, description = '', socialImage, jsonLd = [] } = Astro.props;
+
+// build.format 'file' makes Astro.url.pathname '/tours.html' and '/index.html', so the naive
+// canonical pointed at URLs that answer with a 308 to the clean path — telling search engines
+// the master copy lives behind a redirect. Strip the extension back off.
+const canonicalPath = Astro.url.pathname
+  .replace(/index\.html$/, '')
+  .replace(/\.html$/, '')
+  .replace(/\/$/, '') || '/';
+const canonical = new URL(canonicalPath, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en-GB" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonical} />
+
+    <!-- Google only accepts a favicon that is square and a multiple of 48px, and it also probes
+         /favicon.ico directly. The old 32x32 met neither condition, so the search result kept
+         showing the icon cached from the Framer site. Regenerate with:
+         node scripts/build-favicons.mjs -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-96.png" sizes="96x96" type="image/png" />
+    <link rel="icon" href="/favicon-192.png" sizes="192x192" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#4b6681" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="See you in Iceland" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={canonical} />
+    {socialImage && <meta property="og:image" content={new URL(socialImage, Astro.site).href} />}
+    <meta name="twitter:card" content={socialImage ? 'summary_large_image' : 'summary'} />
+
+    {jsonLd.length > 0 && (
+      <script
+        type="application/ld+json"
+        is:inline
+        set:html={JSON.stringify(jsonLd.length === 1 ? jsonLd[0] : jsonLd)}
+      />
+    )}
+
+    <script is:inline>
+      // Swap the no-js class before first paint so reveal animations can start hidden
+      // without ever trapping content for a reader without JavaScript.
+      document.documentElement.classList.remove('no-js');
+    </script>
+
+    <!-- Google Tag Manager — the same container the Framer site loads (GTM-PKBGZCBN), so the
+         measurement history carries over instead of restarting at the cutover. Whatever tags
+         are configured inside the container keep working untouched. -->
+    <script is:inline>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-PKBGZCBN');
+    </script>
+  </head>
+
+  <body>
+    <noscript>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-PKBGZCBN"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+        title="Google Tag Manager"
+      ></iframe>
+    </noscript>
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <script is:inline>
+      // Scroll-reveal for every .reveal section. Content starts at opacity 0, so three guards
+      // make sure a failure can never hide the page: reveal what is already on screen at load,
+      // fall back when there is no observer, and a last-resort timer that reveals everything.
+      (function () {
+        var nodes = [].slice.call(document.querySelectorAll('.reveal'));
+        if (!nodes.length) return;
+        function show(n) { n.classList.add('is-in'); }
+        function showAll() { nodes.forEach(show); }
+
+        if (!('IntersectionObserver' in window)) { showAll(); return; }
+
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            show(e.target);
+            io.unobserve(e.target);
+          });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+        nodes.forEach(function (n) { io.observe(n); });
+
+        // Anything within the first viewport should never wait on a scroll that may not come.
+        window.addEventListener('load', function () {
+          nodes.forEach(function (n) {
+            if (n.getBoundingClientRect().top < window.innerHeight) show(n);
+          });
+        });
+
+        // Failsafe: if the observer never delivers — a browser quirk, a non-compositing
+        // frame — the page must still be readable.
+        setTimeout(showAll, 3000);
+      })();
+    </script>
+  </body>
+</html>
