@@ -1,0 +1,5 @@
+# /api/ is the TourDesk booking proxy (functions/api/tourdesk) — nothing there for a crawler.
+User-agent: *
+Disallow: /api/
+
+Sitemap: https://www.seeyouiniceland.is/sitemap.xml
