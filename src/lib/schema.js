@@ -114,6 +114,11 @@ export const cabinSchema = (cabin) => {
     node.geo = { '@type': 'GeoCoordinates', latitude: place.latitude, longitude: place.longitude };
   }
   if (cabin.size) node.floorSize = { '@type': 'QuantitativeValue', name: cabin.size };
+  if (cabin.mapsLink) node.hasMap = cabin.mapsLink;
+  // The cabin's Google Business Profile, by its Knowledge Graph id. sameAs is how a page tells
+  // Google that it and the Maps listing are the same place, so the two reinforce each other in
+  // local results instead of competing as separate entities.
+  if (cabin.googleProfile) node.sameAs = [cabin.googleProfile];
 
   // JSON.stringify drops undefined, so optional fields simply vanish rather than appearing null.
   return node;
