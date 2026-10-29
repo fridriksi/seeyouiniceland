@@ -10,9 +10,11 @@ interface Props {
   socialImage?: string;
   /** schema.org objects for this page. Emitted as one ld+json block. */
   jsonLd?: object[];
+  /** Keep the page out of search results and emit no canonical (e.g. the 404 page). */
+  noindex?: boolean;
 }
 
-const { title, description = '', socialImage, jsonLd = [] } = Astro.props;
+const { title, description = '', socialImage, jsonLd = [], noindex = false } = Astro.props;
 
 // build.format 'file' makes Astro.url.pathname '/tours.html' and '/index.html', so the naive
 // canonical pointed at URLs that answer with a 308 to the clean path — telling search engines
@@ -31,7 +33,7 @@ const canonical = new URL(canonicalPath, Astro.site).href;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
 
     <!-- Google only accepts a favicon that is square and a multiple of 48px, and it also probes
          /favicon.ico directly. The old 32x32 met neither condition, so the search result kept
@@ -49,7 +51,7 @@ const canonical = new URL(canonicalPath, Astro.site).href;
     <meta property="og:locale" content="en_GB" />
     <meta property="og:title" content={title} />
     {description && <meta property="og:description" content={description} />}
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     {socialImage && <meta property="og:image" content={new URL(socialImage, Astro.site).href} />}
     <meta name="twitter:card" content={socialImage ? 'summary_large_image' : 'summary'} />
 

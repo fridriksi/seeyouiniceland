@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Cloudflare Pages serves dist/404.html with a real 404 status for any path that has no asset.
+// Without it Pages falls back to SPA mode and answers every unknown URL with the home page and
+// a 200, so search engines index typos and dead Framer URLs as duplicates of the home page.
+---
+
+<Base title="Page not found | See you in Iceland" noindex>
+  <section class="shell head">
+    <p class="eyebrow">Page not found</p>
+    <h1>We couldn't find that page</h1>
+    <p class="lede">The link may be old or mistyped. These might be what you were looking for:</p>
+    <nav class="links" aria-label="Suggested pages">
+      <a class="btn" href="/">Home</a>
+      <a class="btn alt" href="/cabins">Our cabins</a>
+      <a class="btn alt" href="/tours">Tours</a>
+      <a class="btn alt" href="/book-now">Book now</a>
+    </nav>
+  </section>
+</Base>
+
+<style>
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--slate);
+  }
+
+  .head {
+    padding-top: 150px;
+    padding-bottom: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .head h1 { font-size: clamp(32px, 5.5vw, 64px); max-width: 18ch; }
+  .lede { font-size: 17px; line-height: 1.5; max-width: 48ch; }
+
+  .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .btn {
+    background: var(--slate);
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 11px 22px;
+    border-radius: 999px;
+  }
+  .btn.alt {
+    background: var(--surface);
+    color: var(--slate);
+    border: 1px solid var(--rule);
+  }
+</style>
